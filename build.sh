@@ -38,13 +38,18 @@ for section_entry in "${SECTIONS[@]}"; do
   for f in $files; do
     name=$(basename "$f" .md)
 
-    # Light build (default theme)
-    marp "$f" -o "dist/$section/$name.html" --html
+    # Light build
+    tmp_light="/tmp/marp-light-$(basename "$f")"
+    cp "$f" "$tmp_light"
+    sed -i '/^paginate:/a style: "section { font-size: 20px; }"' "$tmp_light"
+    marp "$tmp_light" -o "dist/$section/$name.html" --html
+    rm -f "$tmp_light"
 
-    # Dark build: add class: invert to frontmatter
+    # Dark build: add class: invert
     tmp="/tmp/marp-dark-$(basename "$f")"
     cp "$f" "$tmp"
     sed -i '/^paginate:/a class: invert' "$tmp"
+    sed -i '/^paginate:/a style: "section { font-size: 20px; }"' "$tmp"
     marp "$tmp" -o "dist/dark/$section/$name.html" --html
     rm -f "$tmp"
 
