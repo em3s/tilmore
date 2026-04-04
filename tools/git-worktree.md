@@ -2,6 +2,7 @@
 marp: true
 theme: default
 paginate: true
+title: Git Worktree
 ---
 
 # Git Worktree
