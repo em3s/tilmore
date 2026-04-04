@@ -19,31 +19,47 @@ SECTIONS=(
   "leadership:코드 너머의 역할"
 )
 
-# Marp dark theme + index link snippet
-cat > /tmp/marp-inject.html <<'SNIPPET'
-<script>(function(){var d="section{background:#1a1a1a !important;color:#e0e0e0 !important}section h1,section h2,section h3,section h4,section h5,section h6{color:#fff !important}section code{background:#2a2a2a !important;color:#e0e0e0 !important}section pre{background:#141414 !important}section pre code{background:#141414 !important}section table th,section table td{border-color:#333 !important}section a{color:#6cb6ff !important}";var s=document.createElement("style");function a(){var t=localStorage.getItem("tilmore-theme")||"light";s.textContent=t==="dark"?d:""}document.head.appendChild(s);a();window.addEventListener("focus",a);window.addEventListener("storage",a)})();</script>
+# Theme redirect script: reads localStorage, loads correct version
+cat > /tmp/marp-redirect.html <<'SNIPPET'
+<script>(function(){var t=localStorage.getItem("tilmore-theme")||"light";var p=location.pathname;if(t==="dark"&&!p.includes("/dark/")){location.replace(p.replace(/\/([^/]+)\/([^/]+)$/,"/dark/$1/$2"))}else if(t==="light"&&p.includes("/dark/")){location.replace(p.replace("/dark/",""))}})();</script>
 SNIPPET
 
-# Build slides from each md file
+# Index link snippet
+NAV_LINK='<a href="/tilmore/" style="position:fixed;top:16px;left:16px;font-size:14px;color:#888;text-decoration:none;z-index:9999">&larr; index</a>'
+
+# Build slides: light (default) and dark (gaia invert)
 for section_entry in "${SECTIONS[@]}"; do
   section="${section_entry%%:*}"
 
   files=$(find "$section" -name '*.md' ! -name '.gitkeep' 2>/dev/null | sort)
   [ -z "$files" ] && continue
 
-  mkdir -p "dist/$section"
+  mkdir -p "dist/$section" "dist/dark/$section"
   for f in $files; do
     name=$(basename "$f" .md)
+
+    # Light build (default theme)
     marp "$f" -o "dist/$section/$name.html" --html
-    # index 링크 + 테마 스크립트 주입
-    perl -i -pe '
-      if (/<\/head>/) {
-        open(F, "</tmp/marp-inject.html"); my $s=join("",<F>); close(F);
-        chomp $s;
-        s|</head>|$s</head>|;
-      }
-      s|</body>|<a href="/tilmore/" style="position:fixed;top:16px;left:16px;font-size:14px;color:\#888;text-decoration:none;z-index:9999">\&larr; index</a></body>|;
-    ' "dist/$section/$name.html"
+
+    # Dark build: temporarily patch frontmatter
+    tmp="/tmp/marp-dark-$(basename "$f")"
+    sed '0,/^---$/!{ 0,/^theme: default$/s/^theme: default$/theme: gaia/ }' "$f" > "$tmp"
+    # Add class: invert if not present
+    sed -i '/^paginate:/a class: invert' "$tmp"
+    marp "$tmp" -o "dist/dark/$section/$name.html" --html
+    rm -f "$tmp"
+
+    # Inject redirect script + nav link into both
+    for html in "dist/$section/$name.html" "dist/dark/$section/$name.html"; do
+      perl -i -pe '
+        if (/<\/head>/) {
+          open(F, "</tmp/marp-redirect.html"); my $s=join("",<F>); close(F);
+          chomp $s;
+          s|</head>|$s</head>|;
+        }
+      ' "$html"
+      perl -i -pe "s|</body>|${NAV_LINK}</body>|" "$html"
+    done
   done
 done
 
@@ -65,7 +81,6 @@ cat > dist/index.html <<'HTMLSTART'
     --card-hover-border: #ccc;
     --card-hover-bg: #f5f5f5;
     --text: #1a1a1a;
-    --text-secondary: #666;
     --text-muted: #999;
     --link: #0969da;
     --link-hover: #000;
@@ -83,7 +98,6 @@ cat > dist/index.html <<'HTMLSTART'
     --card-hover-border: #444;
     --card-hover-bg: #1a1a1a;
     --text: #e0e0e0;
-    --text-secondary: #888;
     --text-muted: #666;
     --link: #a0a0a0;
     --link-hover: #fff;
@@ -101,83 +115,34 @@ cat > dist/index.html <<'HTMLSTART'
     min-height: 100vh;
     transition: background 0.3s, color 0.3s;
   }
-  .container {
-    max-width: 960px;
-    margin: 0 auto;
-    padding: 80px 24px;
-  }
-  header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 64px;
-  }
+  .container { max-width: 960px; margin: 0 auto; padding: 80px 24px; }
+  header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 64px; }
   h1 {
-    font-size: 2.4rem;
-    font-weight: 600;
-    letter-spacing: -0.03em;
+    font-size: 2.4rem; font-weight: 600; letter-spacing: -0.03em;
     background: linear-gradient(135deg, var(--h1-from) 0%, var(--h1-to) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   }
   .toggle {
-    background: var(--toggle-bg);
-    border: none;
-    border-radius: 20px;
-    padding: 6px 14px;
-    cursor: pointer;
-    font-size: 0.8rem;
-    color: var(--toggle-fg);
-    font-family: inherit;
-    transition: all 0.2s;
+    background: var(--toggle-bg); border: none; border-radius: 20px;
+    padding: 6px 14px; cursor: pointer; font-size: 0.8rem;
+    color: var(--toggle-fg); font-family: inherit; transition: all 0.2s;
   }
   .toggle:hover { opacity: 0.8; }
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 16px;
-  }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
   .card {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 12px;
-    padding: 24px;
-    transition: all 0.2s ease;
-    cursor: default;
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    border-radius: 12px; padding: 24px; transition: all 0.2s ease; cursor: default;
   }
-  .card:hover {
-    border-color: var(--card-hover-border);
-    background: var(--card-hover-bg);
-    transform: translateY(-2px);
-  }
-  .card h2 {
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 4px;
-    letter-spacing: -0.01em;
-  }
-  .card .desc {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    margin-bottom: 16px;
-  }
+  .card:hover { border-color: var(--card-hover-border); background: var(--card-hover-bg); transform: translateY(-2px); }
+  .card h2 { font-size: 1rem; font-weight: 600; margin-bottom: 4px; letter-spacing: -0.01em; }
+  .card .desc { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px; }
   .card ul { list-style: none; }
   .card li { padding: 3px 0; }
-  .card a {
-    color: var(--link);
-    text-decoration: none;
-    font-size: 0.9rem;
-    transition: color 0.15s;
-  }
+  .card a { color: var(--link); text-decoration: none; font-size: 0.9rem; transition: color 0.15s; }
   .card a:hover { color: var(--link-hover); }
   .card.empty { opacity: 0.35; }
   .card.empty .desc { margin-bottom: 0; }
-  .footer {
-    margin-top: 80px;
-    text-align: center;
-    color: var(--footer-text);
-    font-size: 0.8rem;
-  }
+  .footer { margin-top: 80px; text-align: center; color: var(--footer-text); font-size: 0.8rem; }
   .footer a { color: var(--footer-link); text-decoration: none; }
   .footer a:hover { opacity: 0.8; }
 </style>
@@ -197,7 +162,7 @@ cat > dist/index.html <<'HTMLSTART'
 <div class="grid">
 HTMLSTART
 
-# Write section cards
+# Write section cards — links point to light version, redirect script handles dark
 for section_entry in "${SECTIONS[@]}"; do
   section="${section_entry%%:*}"
   desc="${section_entry#*:}"
