@@ -37,19 +37,11 @@ clone을 하나 더?
 ## Best Practice: bare repo
 
 ```bash
-# bare로 클론 (작업 파일 없이 .git만)
 git clone --bare git@github.com:user/my-project.git ~/workspace/my-project
-
 cd ~/workspace/my-project
-
-# worktree 추가
 git worktree add ../my-project-main main
 git worktree add ../my-project-feature-a feature-a
 ```
-
----
-
-## bare repo 디렉토리 구조
 
 ```
 ~/workspace/
@@ -58,11 +50,54 @@ git worktree add ../my-project-feature-a feature-a
   my-project-feature-a/      ← feature 브랜치
 ```
 
-일반 clone에서 `git worktree add ./feature` 하면 **repo 하위에 생긴다**.
-bare repo 방식에서 `../` 경로를 쓰면 형제 디렉토리에 깔끔하게 정리된다.
+`../` 경로를 쓰면 형제 디렉토리에 깔끔하게 정리된다.
+
+---
+
+## 실습
+
+```bash
+cd /tmp
+git clone --bare git@github.com:em3s/tilmore.git tilmore-bare
+cd tilmore-bare
+git worktree add ../tilmore-main main
+git worktree add ../tilmore-draft draft
+```
+
+```bash
+cd /tmp/tilmore-main
+echo "test" >> README.md && git commit -am "test from main"
+
+cd /tmp/tilmore-draft   # main의 변경이 보이지 않는다
+cat README.md
+```
+
+```bash
+# 정리
+cd /tmp/tilmore-bare
+git worktree remove ../tilmore-main
+git worktree remove ../tilmore-draft
+rm -rf /tmp/tilmore-bare
+```
+
+---
+
+## FAQ
+
+**checkout이랑 뭐가 다른가?**
+checkout은 같은 디렉토리에서 전환. worktree는 다른 디렉토리에 병렬.
+
+**IDE에서 프로젝트를 또 열어야 하나?**
+그렇다. 대신 두 브랜치를 동시에 열어두고 비교할 수 있다.
+
+**같은 브랜치를 두 worktree에서 열 수 있나?**
+안 된다. `.git`이 꼬이기 때문에 git이 막아놓았다.
+
+**worktree를 지우면 브랜치도 사라지나?**
+아니다. 디렉토리만 사라지고 브랜치는 남아있다.
 
 ---
 
 ## more
 
-[FAQ](git-worktree-faq.html) · [실습](git-worktree-lab.html) · [lazygit](lazygit.html)
+[lazygit](lazygit.html)
