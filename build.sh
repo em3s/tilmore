@@ -34,6 +34,8 @@ for section_entry in "${SECTIONS[@]}"; do
     name=$(basename "$f" .md)
     title=$(sed -n '/^---$/,/^---$/{ /^title:/{ s/^title: *//; p; q; } }' "$f")
     marp "$f" -o "dist/$section/$name.html" --html
+    # index로 돌아가는 링크 주입
+    sed -i 's|</body>|<a href="/tilmore/" style="position:fixed;top:16px;left:16px;font-size:14px;color:#888;text-decoration:none;z-index:9999">\&larr; index</a></body>|' "dist/$section/$name.html"
     SECTION_ITEMS="$SECTION_ITEMS<li><a href=\"$section/$name.html\">$title</a></li>"
   done
 
