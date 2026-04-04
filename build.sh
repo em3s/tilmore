@@ -41,10 +41,9 @@ for section_entry in "${SECTIONS[@]}"; do
     # Light build (default theme)
     marp "$f" -o "dist/$section/$name.html" --html
 
-    # Dark build: temporarily patch frontmatter
+    # Dark build: add class: invert to frontmatter
     tmp="/tmp/marp-dark-$(basename "$f")"
-    sed '0,/^---$/!{ 0,/^theme: default$/s/^theme: default$/theme: gaia/ }' "$f" > "$tmp"
-    # Add class: invert if not present
+    cp "$f" "$tmp"
     sed -i '/^paginate:/a class: invert' "$tmp"
     marp "$tmp" -o "dist/dark/$section/$name.html" --html
     rm -f "$tmp"
@@ -92,20 +91,20 @@ cat > dist/index.html <<'HTMLSTART'
     --toggle-fg: #666;
   }
   [data-theme="dark"] {
-    --bg: #1f1f1f;
-    --card-bg: #282828;
-    --card-border: #383838;
+    --bg: #1b1b1b;
+    --card-bg: #242424;
+    --card-border: #333;
     --card-hover-border: #555;
-    --card-hover-bg: #303030;
-    --text: #ccc;
+    --card-hover-bg: #2a2a2a;
+    --text: #ddd;
     --text-muted: #777;
-    --link: #FCAE29;
-    --link-hover: #ffd080;
-    --h1-from: #FCAE29;
-    --h1-to: #c88a1e;
+    --link: #ddd;
+    --link-hover: #fff;
+    --h1-from: #fff;
+    --h1-to: #999;
     --footer-text: #555;
-    --footer-link: #777;
-    --toggle-bg: #383838;
+    --footer-link: #666;
+    --toggle-bg: #333;
     --toggle-fg: #999;
   }
   body {

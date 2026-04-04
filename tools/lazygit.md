@@ -1,6 +1,6 @@
 ---
 marp: true
-theme: default
+theme: uncover
 paginate: true
 title: lazygit
 ---
