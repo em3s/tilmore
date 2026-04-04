@@ -21,7 +21,7 @@ SECTIONS=(
 
 # Marp dark theme + index link snippet
 cat > /tmp/marp-inject.html <<'SNIPPET'
-<script>(function(){var t=localStorage.getItem("tilmore-theme")||"light";if(t==="dark"){var s=document.createElement("style");s.textContent="section{background:#1a1a1a !important;color:#e0e0e0 !important}section h1,section h2,section h3,section h4,section h5,section h6{color:#fff !important}section code{background:#2a2a2a !important;color:#e0e0e0 !important}section pre{background:#141414 !important}section pre code{background:#141414 !important}section table th,section table td{border-color:#333 !important}section a{color:#6cb6ff !important}";document.head.appendChild(s)}})();</script>
+<script>(function(){var d="section{background:#1a1a1a !important;color:#e0e0e0 !important}section h1,section h2,section h3,section h4,section h5,section h6{color:#fff !important}section code{background:#2a2a2a !important;color:#e0e0e0 !important}section pre{background:#141414 !important}section pre code{background:#141414 !important}section table th,section table td{border-color:#333 !important}section a{color:#6cb6ff !important}";var s=document.createElement("style");function a(){var t=localStorage.getItem("tilmore-theme")||"light";s.textContent=t==="dark"?d:""}document.head.appendChild(s);a();window.addEventListener("focus",a);window.addEventListener("storage",a)})();</script>
 SNIPPET
 
 # Build slides from each md file
