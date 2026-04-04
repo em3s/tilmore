@@ -75,38 +75,38 @@ cat > dist/index.html <<'HTMLSTART'
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
   * { margin: 0; padding: 0; box-sizing: border-box; }
   :root {
-    --bg: #fafafa;
+    --bg: #f8f8f8;
     --card-bg: #fff;
-    --card-border: #e5e5e5;
+    --card-border: #e0e0e0;
     --card-hover-border: #ccc;
     --card-hover-bg: #f5f5f5;
-    --text: #1a1a1a;
-    --text-muted: #999;
-    --link: #0969da;
-    --link-hover: #000;
-    --h1-from: #000;
-    --h1-to: #666;
+    --text: #333;
+    --text-muted: #888;
+    --link: #0366d6;
+    --link-hover: #111;
+    --h1-from: #246;
+    --h1-to: #888;
     --footer-text: #aaa;
     --footer-link: #999;
     --toggle-bg: #e5e5e5;
     --toggle-fg: #666;
   }
   [data-theme="dark"] {
-    --bg: #0a0a0a;
-    --card-bg: #141414;
-    --card-border: #222;
-    --card-hover-border: #444;
-    --card-hover-bg: #1a1a1a;
-    --text: #e0e0e0;
-    --text-muted: #666;
-    --link: #a0a0a0;
-    --link-hover: #fff;
-    --h1-from: #fff;
-    --h1-to: #888;
-    --footer-text: #333;
-    --footer-link: #444;
-    --toggle-bg: #222;
-    --toggle-fg: #888;
+    --bg: #1f1f1f;
+    --card-bg: #282828;
+    --card-border: #383838;
+    --card-hover-border: #555;
+    --card-hover-bg: #303030;
+    --text: #ccc;
+    --text-muted: #777;
+    --link: #FCAE29;
+    --link-hover: #ffd080;
+    --h1-from: #FCAE29;
+    --h1-to: #c88a1e;
+    --footer-text: #555;
+    --footer-link: #777;
+    --toggle-bg: #383838;
+    --toggle-fg: #999;
   }
   body {
     font-family: 'Inter', -apple-system, sans-serif;
