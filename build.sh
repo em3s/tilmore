@@ -32,7 +32,7 @@ for section_entry in "${SECTIONS[@]}"; do
   SECTION_ITEMS=""
   for f in $files; do
     name=$(basename "$f" .md)
-    title=$(head -1 "$f" | sed 's/^#* *//')
+    title=$(grep -m1 '^# ' "$f" | sed 's/^# *//')
     marp "$f" -o "dist/$section/$name.html" --html
     SECTION_ITEMS="$SECTION_ITEMS<li><a href=\"$section/$name.html\">$title</a></li>"
   done
