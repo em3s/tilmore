@@ -45,7 +45,7 @@ for section_entry in "${SECTIONS[@]}"; do
 done
 
 # Generate index.html
-cat > dist/index.html <<HTML
+cat > dist/index.html <<'HTMLSTART'
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -53,24 +53,139 @@ cat > dist/index.html <<HTML
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>tilmore</title>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; max-width: 640px; margin: 0 auto; padding: 48px 24px; color: #1a1a1a; }
-  h1 { font-size: 2rem; margin-bottom: 8px; }
-  h1 + p { color: #666; margin-bottom: 48px; }
-  section { margin-bottom: 32px; }
-  h2 { font-size: 1.1rem; margin-bottom: 8px; }
-  .desc { font-weight: normal; color: #888; margin-left: 8px; font-size: 0.9rem; }
-  ul { list-style: none; }
-  li { padding: 4px 0; }
-  a { color: #0969da; text-decoration: none; }
-  a:hover { text-decoration: underline; }
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: #0a0a0a;
+    color: #e0e0e0;
+    min-height: 100vh;
+  }
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 80px 24px;
+  }
+  h1 {
+    font-size: 2.4rem;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    margin-bottom: 64px;
+    background: linear-gradient(135deg, #fff 0%, #888 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  .card {
+    background: #141414;
+    border: 1px solid #222;
+    border-radius: 12px;
+    padding: 24px;
+    transition: all 0.2s ease;
+    cursor: default;
+  }
+  .card:hover {
+    border-color: #444;
+    background: #1a1a1a;
+    transform: translateY(-2px);
+  }
+  .card h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
+  }
+  .card .desc {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 16px;
+  }
+  .card ul {
+    list-style: none;
+  }
+  .card li {
+    padding: 3px 0;
+  }
+  .card a {
+    color: #a0a0a0;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.15s;
+  }
+  .card a:hover {
+    color: #fff;
+  }
+  .card.empty {
+    opacity: 0.35;
+  }
+  .card.empty .desc {
+    margin-bottom: 0;
+  }
+  .footer {
+    margin-top: 80px;
+    text-align: center;
+    color: #333;
+    font-size: 0.8rem;
+  }
+  .footer a {
+    color: #444;
+    text-decoration: none;
+  }
+  .footer a:hover {
+    color: #666;
+  }
 </style>
 </head>
 <body>
+<div class="container">
 <h1>tilmore</h1>
-$SLIDE_ENTRIES
+<div class="grid">
+HTMLSTART
+
+# Write section cards
+for section_entry in "${SECTIONS[@]}"; do
+  section="${section_entry%%:*}"
+  desc="${section_entry#*:}"
+
+  files=$(find "$section" -name '*.md' ! -name '.gitkeep' 2>/dev/null | sort)
+  items=""
+  for f in $files; do
+    name=$(basename "$f" .md)
+    title=$(sed -n '/^---$/,/^---$/{ /^title:/{ s/^title: *//; p; q; } }' "$f")
+    items="$items<li><a href=\"$section/$name.html\">$title</a></li>"
+  done
+
+  if [ -n "$items" ]; then
+    cat >> dist/index.html <<CARD
+<div class="card">
+<h2>$section</h2>
+<div class="desc">$desc</div>
+<ul>$items</ul>
+</div>
+CARD
+  else
+    cat >> dist/index.html <<CARD
+<div class="card empty">
+<h2>$section</h2>
+<div class="desc">$desc</div>
+</div>
+CARD
+  fi
+done
+
+cat >> dist/index.html <<'HTMLEND'
+</div>
+<div class="footer">
+<a href="https://github.com/em3s/tilmore">github</a>
+</div>
+</div>
 </body>
 </html>
-HTML
+HTMLEND
 
 echo "Built $(find dist -name '*.html' | wc -l) files."
