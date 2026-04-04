@@ -19,17 +19,10 @@ SECTIONS=(
   "leadership:코드 너머의 역할"
 )
 
-# Marp dark theme override injected into slides
-MARP_THEME_SCRIPT='<script>
-(function(){
-  var t=localStorage.getItem("tilmore-theme")||"light";
-  if(t==="dark"){
-    var s=document.createElement("style");
-    s.textContent="section{background:#1a1a1a !important;color:#e0e0e0 !important}section h1,section h2,section h3,section h4,section h5,section h6{color:#fff !important}section code{background:#2a2a2a !important;color:#e0e0e0 !important}section pre{background:#141414 !important}section pre code{background:#141414 !important}section table th,section table td{border-color:#333 !important}section a{color:#6cb6ff !important}";
-    document.head.appendChild(s);
-  }
-})();
-</script>'
+# Marp dark theme + index link snippet
+cat > /tmp/marp-inject.html <<'SNIPPET'
+<script>(function(){var t=localStorage.getItem("tilmore-theme")||"light";if(t==="dark"){var s=document.createElement("style");s.textContent="section{background:#1a1a1a !important;color:#e0e0e0 !important}section h1,section h2,section h3,section h4,section h5,section h6{color:#fff !important}section code{background:#2a2a2a !important;color:#e0e0e0 !important}section pre{background:#141414 !important}section pre code{background:#141414 !important}section table th,section table td{border-color:#333 !important}section a{color:#6cb6ff !important}";document.head.appendChild(s)}})();</script>
+SNIPPET
 
 # Build slides from each md file
 for section_entry in "${SECTIONS[@]}"; do
@@ -43,8 +36,14 @@ for section_entry in "${SECTIONS[@]}"; do
     name=$(basename "$f" .md)
     marp "$f" -o "dist/$section/$name.html" --html
     # index 링크 + 테마 스크립트 주입
-    sed -i "s|</head>|${MARP_THEME_SCRIPT}</head>|" "dist/$section/$name.html"
-    sed -i 's|</body>|<a href="/tilmore/" style="position:fixed;top:16px;left:16px;font-size:14px;color:#888;text-decoration:none;z-index:9999">\&larr; index</a></body>|' "dist/$section/$name.html"
+    perl -i -pe '
+      if (/<\/head>/) {
+        open(F, "</tmp/marp-inject.html"); my $s=join("",<F>); close(F);
+        chomp $s;
+        s|</head>|$s</head>|;
+      }
+      s|</body>|<a href="/tilmore/" style="position:fixed;top:16px;left:16px;font-size:14px;color:\#888;text-decoration:none;z-index:9999">\&larr; index</a></body>|;
+    ' "dist/$section/$name.html"
   done
 done
 
