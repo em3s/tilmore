@@ -1,6 +1,13 @@
 #!/bin/bash
 set -e
 
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+cd "$SCRIPT_DIR"
+
+# Base URL: /tilmore/ for GitHub Pages, / for local
+BASE_URL="${BASE_URL:-/tilmore/}"
+
+rm -rf dist
 mkdir -p dist
 
 SECTIONS=(
@@ -19,15 +26,13 @@ SECTIONS=(
   "leadership:코드 너머의 역할"
 )
 
-# Theme redirect script: reads localStorage, loads correct version
-cat > /tmp/marp-redirect.html <<'SNIPPET'
-<script>(function(){var t=localStorage.getItem("tilmore-theme")||"light";var p=location.pathname;if(t==="dark"&&!p.includes("/dark/")){location.replace(p.replace(/\/([^/]+)\/([^/]+)$/,"/dark/$1/$2"))}else if(t==="light"&&p.includes("/dark/")){location.replace(p.replace("/dark/",""))}})();</script>
-SNIPPET
+TMPDIR=$(mktemp -d)
+trap "rm -rf $TMPDIR" EXIT
 
-# Index link snippet
-NAV_LINK='<a href="/tilmore/" style="position:fixed;top:16px;left:16px;font-size:14px;color:#888;text-decoration:none;z-index:9999">&larr; index</a>'
+# Theme redirect script (single line)
+echo '<script>(function(){var t=localStorage.getItem("tilmore-theme")||"light";var p=location.pathname;if(t==="dark"&&!p.includes("/dark/")){location.replace(p.replace(/\/([^\/]+)\/([^\/]+)$/,"/dark/$1/$2"))}else if(t==="light"&&p.includes("/dark/")){location.replace(p.replace("/dark/",""))}})();</script>' > "$TMPDIR/redirect.html"
 
-# Build slides: light (default) and dark (gaia invert)
+# Build slides
 for section_entry in "${SECTIONS[@]}"; do
   section="${section_entry%%:*}"
 
@@ -38,31 +43,23 @@ for section_entry in "${SECTIONS[@]}"; do
   for f in $files; do
     name=$(basename "$f" .md)
 
-    # Light build
-    tmp_light="/tmp/marp-light-$(basename "$f")"
-    cp "$f" "$tmp_light"
-    sed -i '/^paginate:/a style: "section { font-size: 20px; }"' "$tmp_light"
-    marp "$tmp_light" -o "dist/$section/$name.html" --html
-    rm -f "$tmp_light"
+    # Light build: inject font-size into frontmatter
+    awk '/^paginate:/{print; print "style: \"section { font-size: 24px; }\""; next}1' "$f" > "$TMPDIR/light.md"
+    marp "$TMPDIR/light.md" -o "dist/$section/$name.html" --html
 
-    # Dark build: add class: invert
-    tmp="/tmp/marp-dark-$(basename "$f")"
-    cp "$f" "$tmp"
-    sed -i '/^paginate:/a class: invert' "$tmp"
-    sed -i '/^paginate:/a style: "section { font-size: 20px; }"' "$tmp"
-    marp "$tmp" -o "dist/dark/$section/$name.html" --html
-    rm -f "$tmp"
+    # Dark build: inject font-size + invert
+    awk '/^paginate:/{print; print "class: invert"; print "style: \"section { font-size: 24px; }\""; next}1' "$f" > "$TMPDIR/dark.md"
+    marp "$TMPDIR/dark.md" -o "dist/dark/$section/$name.html" --html
 
-    # Inject redirect script + nav link into both
+    # Inject redirect + nav into both
     for html in "dist/$section/$name.html" "dist/dark/$section/$name.html"; do
-      perl -i -pe '
-        if (/<\/head>/) {
-          open(F, "</tmp/marp-redirect.html"); my $s=join("",<F>); close(F);
-          chomp $s;
-          s|</head>|$s</head>|;
+      perl -i -0777 -pe '
+        BEGIN {
+          open(F, "'"$TMPDIR/redirect.html"'"); local $/; $r=<F>; close(F); chomp $r;
         }
+        s|</head>|$r</head>|;
+        s|</body>|<a href="'"$BASE_URL"'" style="position:fixed;top:16px;left:16px;font-size:14px;color:#888;text-decoration:none;z-index:9999">\&larr; index</a></body>|;
       ' "$html"
-      perl -i -pe "s|</body>|${NAV_LINK}</body>|" "$html"
     done
   done
 done
@@ -166,7 +163,7 @@ cat > dist/index.html <<'HTMLSTART'
 <div class="grid">
 HTMLSTART
 
-# Write section cards — links point to light version, redirect script handles dark
+# Write section cards
 for section_entry in "${SECTIONS[@]}"; do
   section="${section_entry%%:*}"
   desc="${section_entry#*:}"
