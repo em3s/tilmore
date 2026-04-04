@@ -3,8 +3,10 @@ marp: true
 theme: neobeam-oldenbeam
 paginate: true
 title: lazygit
+footer: '**tilmore** **lazygit** **tools**'
 ---
 
+<!-- _class: title -->
 # lazygit
 
 git을 터미널에서 쓰면 명령어를 외워야 한다.

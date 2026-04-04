@@ -3,8 +3,10 @@ marp: true
 theme: neobeam-oldenbeam
 paginate: true
 title: Git Worktree
+footer: '**tilmore** **Git Worktree** **tools**'
 ---
 
+<!-- _class: title -->
 # Git Worktree
 
 feature 브랜치에서 작업 중인데, 급하게 hotfix를 해야 한다.

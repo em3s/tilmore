@@ -1,10 +1,12 @@
 ---
 marp: true
 theme: neobeam-oldenbeam
-paginate: false
+paginate: true
 title: tilmore
+footer: '**tilmore** **em3s** **2026**'
 ---
 
+<!-- _class: title -->
 # tilmore
 
 ---
