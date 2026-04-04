@@ -3,7 +3,7 @@ marp: true
 theme: neobeam-oldenbeam
 paginate: true
 title: Git Worktree
-footer: '**tilmore** **Git Worktree** **tools**'
+footer: '**[tilmore](../index.html)** **Git Worktree** **tools**'
 ---
 
 <!-- _class: title -->

@@ -26,12 +26,6 @@ SECTIONS=(
   "leadership:코드 너머의 역할"
 )
 
-TMPDIR=$(mktemp -d)
-trap "rm -rf $TMPDIR" EXIT
-
-# Nav link
-NAV_LINK="<a href=\"${BASE_URL}\" style=\"position:fixed;top:16px;left:16px;font-size:14px;color:#888;text-decoration:none;z-index:9999\">&larr; index</a>"
-
 # Build slides
 for section_entry in "${SECTIONS[@]}"; do
   section="${section_entry%%:*}"
@@ -42,11 +36,7 @@ for section_entry in "${SECTIONS[@]}"; do
   mkdir -p "dist/$section"
   for f in $files; do
     name=$(basename "$f" .md)
-
     marp "$f" -o "dist/$section/$name.html" --html --theme-set themes/
-
-    # Inject nav link
-    perl -i -pe "s|</body>|${NAV_LINK}</body>|" "dist/$section/$name.html"
   done
 done
 
