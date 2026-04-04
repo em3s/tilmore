@@ -74,37 +74,37 @@ cat > dist/index.html <<'HTMLSTART'
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
   * { margin: 0; padding: 0; box-sizing: border-box; }
   :root {
-    --bg: #f8f8f8;
+    --bg: #fdfcff;
     --card-bg: #fff;
-    --card-border: #e0e0e0;
+    --card-border: #e8e7eb;
     --card-hover-border: #ccc;
-    --card-hover-bg: #f5f5f5;
-    --text: #333;
+    --card-hover-bg: #f5f4f8;
+    --text: #202228;
     --text-muted: #888;
-    --link: #0366d6;
-    --link-hover: #111;
-    --h1-from: #246;
-    --h1-to: #888;
+    --link: #009dd5;
+    --link-hover: #007aa8;
+    --h1-from: #202228;
+    --h1-to: #666;
     --footer-text: #aaa;
     --footer-link: #999;
-    --toggle-bg: #e5e5e5;
+    --toggle-bg: #e8e7eb;
     --toggle-fg: #666;
   }
   [data-theme="dark"] {
-    --bg: #1b1b1b;
-    --card-bg: #242424;
-    --card-border: #333;
-    --card-hover-border: #555;
-    --card-hover-bg: #2a2a2a;
-    --text: #ddd;
-    --text-muted: #777;
-    --link: #ddd;
-    --link-hover: #fff;
+    --bg: #202228;
+    --card-bg: #282a32;
+    --card-border: #363840;
+    --card-hover-border: #50525a;
+    --card-hover-bg: #2e3038;
+    --text: #fff;
+    --text-muted: #888;
+    --link: #4dbde8;
+    --link-hover: #8dd4f0;
     --h1-from: #fff;
-    --h1-to: #999;
-    --footer-text: #555;
+    --h1-to: #888;
+    --footer-text: #50525a;
     --footer-link: #666;
-    --toggle-bg: #333;
+    --toggle-bg: #363840;
     --toggle-fg: #999;
   }
   body {
