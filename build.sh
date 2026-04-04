@@ -38,10 +38,10 @@ for section_entry in "${SECTIONS[@]}"; do
     name=$(basename "$f" .md)
     created=$(git log --diff-filter=A --format='%as' -- "$f" | tail -1)
     updated=$(git log -1 --format='%as' -- "$f")
-    # Inject dates after title slide heading
+    # Inject dates as top-right label on title slide
     tmp=$(mktemp)
     awk -v c="$created" -v u="$updated" '
-      /^# / && !done { print; print ""; print "<small>created " c " · updated " u "</small>"; done=1; next }
+      /^# / && !done { print "<div style=\"position:absolute;top:24px;right:40px;font-size:11px;opacity:0.4\">created " c " · updated " u "</div>"; print; done=1; next }
       { print }
     ' "$f" > "$tmp"
     marp "$tmp" -o "dist/$section/$name.html" --html --theme-set themes/
