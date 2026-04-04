@@ -66,7 +66,6 @@ cat > dist/index.html <<HTML
 </head>
 <body>
 <h1>tilmore</h1>
-<p>아무리 알아도 여전히 더 배울 게 있다.</p>
 $SLIDE_ENTRIES
 </body>
 </html>
