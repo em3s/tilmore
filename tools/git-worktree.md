@@ -1,6 +1,6 @@
 ---
 marp: true
-theme: uncover
+theme: neobeam-oldenbeam
 paginate: true
 title: Git Worktree
 ---
