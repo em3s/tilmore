@@ -36,7 +36,16 @@ for section_entry in "${SECTIONS[@]}"; do
   mkdir -p "dist/$section"
   for f in $files; do
     name=$(basename "$f" .md)
-    marp "$f" -o "dist/$section/$name.html" --html --theme-set themes/
+    created=$(git log --diff-filter=A --format='%as' -- "$f" | tail -1)
+    updated=$(git log -1 --format='%as' -- "$f")
+    # Inject dates after title slide heading
+    tmp=$(mktemp)
+    awk -v c="$created" -v u="$updated" '
+      /^# / && !done { print; print ""; print "<small>created " c " · updated " u "</small>"; done=1; next }
+      { print }
+    ' "$f" > "$tmp"
+    marp "$tmp" -o "dist/$section/$name.html" --html --theme-set themes/
+    rm -f "$tmp"
   done
 done
 
