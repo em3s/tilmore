@@ -3,7 +3,7 @@ marp: true
 theme: neobeam-oldenbeam
 paginate: true
 title: lazygit
-footer: '**[tilmore](../index.html)** **lazygit** **tools**'
+footer: '**[← tilmore](../index.html)** **lazygit** **tools**'
 ---
 
 <!-- _class: title -->
