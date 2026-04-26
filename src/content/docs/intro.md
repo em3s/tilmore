@@ -1,6 +1,8 @@
 ---
 title: 읽는 법
 description: 회차 구성과 각 회차의 섹션 구조
+banner:
+  content: '<strong>초안</strong> · 본문은 다듬는 중입니다.'
 ---
 
 ## 회차 구성

@@ -1,6 +1,8 @@
 ---
 title: 의도적으로 뺀 주제들
 description: 이번 범위 밖의 주제들 — 추후 후보군
+banner:
+  content: '<strong>초안</strong> · 본문은 다듬는 중입니다.'
 ---
 
 이번 범위에서는 다루지 않는다. B층 보너스로 맛볼 수는 있음.
