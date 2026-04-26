@@ -16,6 +16,7 @@ export default defineConfig({
         { label: '소개', link: '/' },
         { label: '읽는 법', link: '/intro/' },
         { label: '회차', autogenerate: { directory: 'sessions' } },
+        { label: '범위 밖', link: '/scope/' },
       ],
     }),
   ],
