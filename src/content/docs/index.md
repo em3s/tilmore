@@ -1,4 +1,7 @@
-# 문제해결을 위한 수학적 사고
+---
+title: 문제해결을 위한 수학적 사고
+description: 수학은 사고의 뼈대다. 차별점은 여기서 나온다.
+---
 
 > 수학은 사고의 뼈대다. 차별점은 여기서 나온다.
 
@@ -16,11 +19,4 @@
 | W8 | 언제 멈출 것인가 | Optimal Stopping, Secretary Problem |
 | W9 | 시스템이 왜 느린지 모른다 | Little's Law, Queueing |
 
-상세: [syllabus.md](syllabus.md)
-
-## 빌드
-
-```
-make dev      # 로컬 (http://localhost:8000)
-make build    # 정적 빌드
-```
+[읽는 법 →](/tilmore/intro/)

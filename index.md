@@ -2,62 +2,57 @@
 marp: true
 theme: neobeam-oldenbeam
 paginate: false
-title: tilmore
-footer: '**tilmore** **em3s** **2026**'
+title: 문제해결을 위한 수학적 사고
+footer: ''
 ---
 
 <!-- _class: title -->
 
-# tilmore
+# 문제해결을 위한 수학적 사고
+
+> 수학은 사고의 뼈대다. 차별점은 여기서 나온다.
 
 <style scoped>
 section { font-size: 16px; }
-.sections { columns: 2; column-gap: 3em; text-align: left; margin-top: 1em; }
-.sections h4 { margin: 0.6em 0 0; font-size: 1.1em; }
-.sections p { margin: 0; opacity: 0.6; font-size: 0.95em; }
-.sections a { color: inherit; text-decoration: none; opacity: 0.8; }
-.sections a:hover { opacity: 1; }
+.weeks { columns: 2; column-gap: 3em; text-align: left; margin-top: 1em; }
+.weeks h4 { margin: 0.6em 0 0; font-size: 1.1em; }
+.weeks p { margin: 0; opacity: 0.6; font-size: 0.95em; }
+.tools { position: absolute; bottom: 24px; right: 40px; font-size: 10px; opacity: 0.3; }
+.tools a { color: inherit; text-decoration: none; }
+.tools a:hover { opacity: 1; }
 </style>
 
-<div class="sections">
+<div class="weeks">
 
-#### math
-엔지니어에게 필요한 수학
+#### W1. 변수가 많다
+ALS, Matrix Factorization
 
-#### systems
-하드웨어와 가까운 지식
+#### W2. 뭘 해야 할지 모른다
+Gradient Descent, Backpropagation
 
-#### ai
-직접 구현하며 이해하기
+#### W3. 데이터로 답을 찾는다
+MLE, MAP, Bayesian
 
-#### production
-연구와 현실의 격차
+#### W4. 전부 볼 수 없다
+Sampling, 가설 검정, Bandit
 
-#### architecture
-대규모 시스템 설계
+#### W5. 정확함이 비싸다
+Bloom, HLL, Count-Min, t-digest
 
-#### scaling
-단계별 아키텍처 진화
+#### W6. 하나로는 부족하다
+Boosting, XGBoost, Random Forest
 
-#### db
-DB 트레이드오프와 내부 원리
+#### W7. 개체가 아니라 연결
+PageRank, Power Iteration
 
-#### distributed
-분산 시스템의 본질
+#### W8. 언제 멈출 것인가
+Optimal Stopping
 
-#### concurrency
-동시성의 모델과 함정
+#### W9. 시스템이 왜 느린지 모른다
+Little's Law, Queueing
 
-#### migration
-대규모 마이그레이션 전략
+</div>
 
-#### tools
-[Git Worktree](tools/git-worktree.html) · [lazygit](tools/lazygit.html)
-
-#### craft
-일하는 방식
-
-#### leadership
-코드 너머의 역할
-
+<div class="tools">
+<a href="tools/git-worktree.html">git worktree</a> · <a href="tools/lazygit.html">lazygit</a>
 </div>
