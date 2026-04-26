@@ -1,9 +1,15 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 
 export default defineConfig({
   site: 'https://em3s.github.io',
   base: '/tilmore',
+  markdown: {
+    remarkPlugins: [remarkMath],
+    rehypePlugins: [rehypeKatex],
+  },
   integrations: [
     starlight({
       title: '문제해결을 위한 수학적 사고',
@@ -12,6 +18,7 @@ export default defineConfig({
       locales: {
         root: { label: '한국어', lang: 'ko' },
       },
+      customCss: ['katex/dist/katex.min.css'],
       sidebar: [
         { label: '소개', link: '/' },
         { label: '읽는 법', link: '/intro/' },
