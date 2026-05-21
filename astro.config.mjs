@@ -18,7 +18,7 @@ export default defineConfig({
       locales: {
         root: { label: '한국어', lang: 'ko' },
       },
-      customCss: ['katex/dist/katex.min.css'],
+      customCss: ['katex/dist/katex.min.css', './src/styles/hotdog.css'],
       sidebar: [
         {
           label: '문제해결을 위한 수학적 사고',
@@ -30,12 +30,7 @@ export default defineConfig({
         },
         {
           label: '스태프 핫도그',
-          items: [
-            { label: '리더 열기', link: '/staffhotdog/', attrs: { target: '_blank' } },
-            { label: '#1 — MapReduce', link: '/staffhotdog/?book=01', attrs: { target: '_blank' } },
-            { label: '#2 — Latency Numbers', link: '/staffhotdog/?book=02', attrs: { target: '_blank' } },
-            { label: '#3 — Bloom Filter', link: '/staffhotdog/?book=03', attrs: { target: '_blank' } },
-          ],
+          autogenerate: { directory: 'staffhotdog' },
         },
       ],
     }),

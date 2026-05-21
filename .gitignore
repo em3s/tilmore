@@ -2,3 +2,6 @@ dist/
 node_modules/
 .astro/
 .claude/settings.local.json
+
+# 자동 생성(scripts/gen-hotdog-pages.mjs, predev/prebuild). 원본은 public/staffhotdog/content/*.json
+src/content/docs/staffhotdog/

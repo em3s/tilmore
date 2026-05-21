@@ -1,0 +1,54 @@
+/* 스태프 핫도그 원문 페이지 전용 스타일 (리더의 톤을 Starlight 문서로 이식).
+   Starlight 본문 컨테이너 .sl-markdown-content 안에서만 적용. */
+
+.sl-markdown-content .ebook-launch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  padding: 0.5em 1em;
+  border-radius: 999px;
+  background: var(--sl-color-accent-low);
+  color: var(--sl-color-accent-high);
+  border: 1px solid var(--sl-color-accent);
+  font-weight: 600;
+  text-decoration: none;
+  margin: 0 0 1.5em;
+}
+.sl-markdown-content .ebook-launch:hover {
+  background: var(--sl-color-accent);
+  color: var(--sl-color-white);
+}
+
+/* 그림 — 흰 배경 고정(다이어그램 가독성) */
+.sl-markdown-content .figure {
+  margin: 1.4em 0;
+  text-align: center;
+  background: #fff;
+  padding: 0.5em;
+  border-radius: 8px;
+  border: 1px solid var(--sl-color-gray-5);
+}
+.sl-markdown-content .figure img {
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+}
+
+/* 콜아웃 */
+.sl-markdown-content .callout {
+  margin: 1.4em 0;
+  padding: 0.9em 1.1em;
+  border-radius: 8px;
+  border: 1px solid;
+}
+.sl-markdown-content .callout > :first-child { margin-top: 0; }
+.sl-markdown-content .callout > :last-child { margin-bottom: 0; }
+.sl-markdown-content .callout-title { font-weight: 700; margin: 0 0 0.3em; }
+.sl-markdown-content .callout-purple { background: rgba(127, 119, 221, 0.08); border-color: rgba(127, 119, 221, 0.4); }
+.sl-markdown-content .callout-blue   { background: rgba(56, 138, 221, 0.08);  border-color: rgba(56, 138, 221, 0.4); }
+.sl-markdown-content .callout-amber  { background: rgba(186, 117, 23, 0.08);  border-color: rgba(186, 117, 23, 0.4); }
+.sl-markdown-content .callout-teal   { background: rgba(29, 158, 117, 0.08);  border-color: rgba(29, 158, 117, 0.4); }
+
+/* 닫는 글 마무리 */
+.sl-markdown-content .closing { text-align: center; margin-top: 2.5em; color: var(--sl-color-gray-3); }
+.sl-markdown-content .closing-mark { font-family: "Times New Roman", serif; font-style: italic; font-size: 1.4em; }

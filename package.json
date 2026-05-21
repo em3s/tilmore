@@ -3,7 +3,10 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
+    "gen": "node scripts/gen-hotdog-pages.mjs",
+    "predev": "node scripts/gen-hotdog-pages.mjs",
     "dev": "astro dev",
+    "prebuild": "node scripts/gen-hotdog-pages.mjs",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro"
