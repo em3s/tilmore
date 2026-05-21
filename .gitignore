@@ -5,3 +5,4 @@ node_modules/
 
 # 자동 생성(predev/prebuild)
 public/sw.js
+public/staffhotdog/*.epub

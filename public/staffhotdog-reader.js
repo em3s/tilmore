@@ -90,6 +90,8 @@
   #hotdog-ebook .booksel a.active{border-color:var(--accent);color:var(--accent);font-weight:700;}
   #hotdog-ebook .toc a{display:block;padding:9px 12px;border-radius:8px;color:var(--ink);text-decoration:none;cursor:pointer;}
   #hotdog-ebook .toc a:active,#hotdog-ebook .toc a.active{background:var(--accent);color:#fff;}
+  #hotdog-ebook .hd-dl{display:inline-flex;align-items:center;gap:6px;margin:14px 8px 4px;font-size:13px;color:var(--muted);text-decoration:none;}
+  #hotdog-ebook .hd-dl:hover{color:var(--accent);}
   html.hd-ebook-active,html.hd-ebook-active body{overflow:hidden;}
   `;
 
@@ -138,6 +140,7 @@
         <div class="panel">
           <h2>권 선택</h2><div class="booksel" id="hd-booksel"></div>
           <h2>목차</h2><div class="toc" id="hd-toc"></div>
+          <a class="hd-dl" id="hd-dl" href="#" download>⬇ 이 권 epub 내려받기</a>
         </div>
       </div>`;
     document.body.appendChild(root);
@@ -250,6 +253,7 @@
 
     // 제목: 페이지 타이틀("스태프 핫도그 #N — Topic | tilmore")에서
     $('hd-title').textContent = document.title.split('—')[0].trim() || document.title.split('|')[0].trim();
+    $('hd-dl').href = `${BASE}/staffhotdog/staff_hotdog_${bookId}.epub`;
     // 권 목록: 페이지 사이드바 nav의 원문 링크에서 추출 (별도 인덱스 파일 불필요)
     const sel = $('hd-booksel'); const seen = {};
     Array.from(document.querySelectorAll('a[href*="/staffhotdog/book"]'))

@@ -3,9 +3,10 @@
 > 회차 콘텐츠가 이 repo에서 **어떻게 파일이 되고, 어떻게 렌더·배포되는가**.
 > 글을 어떤 톤·구조로 쓰는가는 [staffhotdog-content.md](./staffhotdog-content.md).
 >
-> **더 이상 EPUB가 아니다.** 과거엔 EPUB로 빌드했지만 지금은 Astro + Starlight
-> repo 안의 **마크다운 한 파일**이 곧 회차다. epub·JSON·빌드 스크립트·epubcheck
-> 전부 없다.
+> **소스는 EPUB가 아니라 마크다운이다(SSOT).** 회차는 Astro + Starlight repo 안의
+> **마크다운 한 파일**. epub은 그 마크다운에서 **빌드 때 자동 생성**하는 다운로드
+> 산출물일 뿐이다(아래 "epub 생성" 참고). 옛 수작업 epub 파이프라인(JSON·build 스크립트·
+> 수동 epubcheck)은 없다.
 
 ---
 
@@ -137,6 +138,15 @@ banner:
   (원문 페이지·이미지·엔진 프리캐시). 새 회차는 md 파일명에서 자동 인식.
 - 사이드바·이북 권 선택기는 md만 추가하면 자동(`sidebar.order`로 순서).
 
+## epub 생성 (다운로드)
+
+- `scripts/gen-epub.mjs`가 prebuild/predev에서 각 `bookNN.md` → `public/staffhotdog/
+  staff_hotdog_NN.epub`(EPUB3)로 생성. 마크다운이 SSOT, epub은 산출물(gitignore).
+- 챕터(`##`)는 epub 챕터(XHTML)로, `###`→h2. 표지·이미지·스타일 포함.
+- 다운로드: 이북 메뉴(☰) 하단 "⬇ 이 권 epub 내려받기" → `staff_hotdog_NN.epub`.
+- 본문이 XHTML 친화적이어야 함(자동닫힘 태그, `&` 이스케이프). 마크다운 작성 규칙을
+  지키면 자동 충족. 새 회차 추가 시 epub도 자동 생성된다.
+
 ---
 
 ## 주의사항
@@ -149,5 +159,5 @@ banner:
 - 콜아웃 색은 `purple/blue/amber/teal/gray`만.
 - 그림: monospace+한글 깨짐 주의, viewBox 480 고수, 한 그림 한 메시지.
 
-**폐기 (안 씀)**: EPUB3 빌드, mimetype/manifest, epubcheck, `properties="svg"`,
-`&nbsp;`, build_epub_*.py.
+**폐기 (안 씀)**: 옛 수작업 epub 파이프라인(build_epub_*.py, 수동 epubcheck, JSON 소스).
+epub 자체는 이제 마크다운에서 자동 생성된다(위 "epub 생성").
