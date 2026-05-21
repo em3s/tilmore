@@ -22,6 +22,7 @@ export default defineConfig({
         { tag: 'meta', attrs: { name: 'apple-mobile-web-app-title', content: 'tilmore' } },
         { tag: 'meta', attrs: { name: 'apple-mobile-web-app-status-bar-style', content: 'default' } },
         { tag: 'meta', attrs: { name: 'mobile-web-app-capable', content: 'yes' } },
+        { tag: 'script', content: "if('serviceWorker' in navigator){addEventListener('load',function(){navigator.serviceWorker.register('/tilmore/sw.js',{scope:'/tilmore/'}).catch(function(){})})}" },
       ],
       defaultLocale: 'root',
       locales: {

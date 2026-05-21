@@ -266,6 +266,7 @@
       curData = await (await fetch(`content/book${id}.json`)).json();
       $('bookTitle').textContent = barTitle(curData.title);
       $('srcLink').href = `/tilmore/staffhotdog/book${id}/`;
+      history.replaceState(null, '', `?book=${id}`);   // 권 전환 시 URL 동기화(새로고침·공유 일관성)
       document.querySelectorAll('#booksel button').forEach((b) => b.classList.toggle('active', b.dataset.id === id));
 
       // 본문 주입 (섹션 경계마다 컬럼 분리)
@@ -415,6 +416,12 @@
 
     init();
   })();
+  </script>
+  <script>
+    // 서비스워커 등록 — 오프라인 읽기 + 설치형 PWA
+    if ('serviceWorker' in navigator) {
+      addEventListener('load', () => navigator.serviceWorker.register('/tilmore/sw.js', { scope: '/tilmore/' }).catch(() => {}));
+    }
   </script>
 </body>
 </html>
