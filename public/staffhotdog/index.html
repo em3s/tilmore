@@ -168,7 +168,7 @@
   <script>
   (function () {
     const $ = (id) => document.getElementById(id);
-    const pages = $('pages'), viewport = $('viewport');
+    const pages = $('pages'), viewport = $('viewport'), stage = $('stage');
     let books = [], curBook = null, curData = null;
     let page = 0, totalPages = 0, pageStep = 0, sectionPages = [];
     let fs = Number(localStorage.getItem('hd.fs')) || 17;
@@ -275,23 +275,24 @@
     const prev = () => goTo(page - 1);
 
     // ===== 입력: 탭 존, 스와이프, 키보드, 스크럽 =====
-    $('zoneR').onclick = next;
-    $('zoneL').onclick = prev;
-    $('zoneC').onclick = () => document.body.classList.toggle('immersive');
+    let justSwiped = false;   // 스와이프 직후 잠깐, 탭존이 합성 click을 무시하도록
+    $('zoneR').onclick = () => { if (!justSwiped) next(); };
+    $('zoneL').onclick = () => { if (!justSwiped) prev(); };
+    $('zoneC').onclick = () => { if (!justSwiped) document.body.classList.toggle('immersive'); };
     document.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
       if (e.key === 'ArrowLeft') prev();
     });
     $('scrub').addEventListener('input', (e) => goTo(+e.target.value));
 
-    // 손가락 따라가는 스와이프
+    // 손가락 따라가는 스와이프 — 탭존이 뷰포트를 덮으므로 공통 부모 #stage에 바인딩
     let dragX = 0, dragging = false, moved = false;
-    viewport.addEventListener('touchstart', (e) => {
+    stage.addEventListener('touchstart', (e) => {
       if (e.touches.length !== 1) return;
       dragging = true; moved = false; dragX = e.touches[0].clientX;
       pages.style.transition = 'none';
     }, { passive: true });
-    viewport.addEventListener('touchmove', (e) => {
+    stage.addEventListener('touchmove', (e) => {
       if (!dragging) return;
       const dx = e.touches[0].clientX - dragX;
       if (Math.abs(dx) > 6) moved = true;
@@ -302,16 +303,15 @@
       if (t < min) t = min + (t - min) * .35;
       pages.style.transform = `translateX(${t}px)`;
     }, { passive: true });
-    viewport.addEventListener('touchend', (e) => {
+    stage.addEventListener('touchend', (e) => {
       if (!dragging) return;
       dragging = false;
       pages.style.transition = 'transform .3s ease';
       const dx = e.changedTouches[0].clientX - dragX;
       const thresh = Math.min(80, pageStep * .2);
       if (dx <= -thresh) next(); else if (dx >= thresh) prev(); else goTo(page);
-      // 탭 존 클릭과 스와이프 충돌 방지: 움직였으면 다음 click 무시
-      if (moved) { const swallow = (ev) => { ev.stopPropagation(); ev.preventDefault(); };
-        viewport.addEventListener('click', swallow, { capture: true, once: true }); }
+      // 움직인 제스처면 뒤따르는 합성 click(탭존)을 잠깐 무시 — 자동 해제되어 다음 탭은 정상
+      if (moved) { justSwiped = true; setTimeout(() => { justSwiped = false; }, 400); }
     }, { passive: true });
 
     // 글자 크기
