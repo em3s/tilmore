@@ -3,9 +3,7 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "extract": "node scripts/extract-hotdog.mjs",
     "dev": "astro dev",
-    "prebuild": "node scripts/extract-hotdog.mjs",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro"

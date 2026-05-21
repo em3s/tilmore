@@ -70,7 +70,7 @@
   .zone.l { left: 0; } .zone.r { right: 0; }
   .zone.c { left: 32%; right: 32%; z-index: 9; }
 
-  /* ===== content styles (epub 원본 이식) ===== */
+  /* ===== content styles ===== */
   #pages h1, #pages h2, #pages h3 { font-weight: 700; letter-spacing: -.01em; line-height: 1.35; break-after: avoid; }
   #pages h1 { font-size: 1.7em; margin: .2em 0 .6em; }
   #pages h2 { font-size: 1.3em; margin: 1.6em 0 .5em; border-bottom: 1px solid var(--line); padding-bottom: .3em; }
@@ -86,7 +86,13 @@
   #pages pre { background: rgba(127,127,127,.08); padding: .9em 1em; border-radius: 6px; border: 1px solid var(--line); line-height: 1.55; white-space: pre-wrap; overflow-wrap: break-word; word-break: break-word; }
   #pages pre code { background: transparent; padding: 0; }
   #pages .figure { margin: 1.1em 0; text-align: center; background: #fff; padding: .4em; border-radius: 8px; border: 1px solid var(--line); break-inside: avoid; }
-  #pages .figure img { max-width: 100%; max-height: 60vh; height: auto; display: block; margin: 0 auto; }
+  /* 미디어는 분할 불가 → 한 페이지(컬럼) 안에 반드시 들어가도록 높이 상한.
+     컬럼 높이 ≈ 100dvh - (상하 chrome+패딩 ~112px); 여유 두고 -150px. dvh 미지원은 60vh 폴백. */
+  #pages img, #pages svg, #pages video {
+    max-width: 100%; height: auto; display: block; margin: 0 auto;
+    max-height: 60vh;
+    max-height: calc(100dvh - 150px);
+  }
   #pages .callout { margin: 1.2em 0; padding: .9em 1.1em; border-radius: 8px; border: 1px solid; }
   #pages .callout-purple { background: rgba(127,119,221,.08); border-color: rgba(127,119,221,.35); }
   #pages .callout-blue   { background: rgba(56,138,221,.08);  border-color: rgba(56,138,221,.35); }
@@ -126,8 +132,6 @@
   .booksel button.active { border-color: var(--accent); color: var(--accent); font-weight: 700; }
   .toc a { display: block; padding: 9px 12px; border-radius: 8px; color: var(--ink); text-decoration: none; }
   .toc a:active, .toc a.active { background: var(--accent); color: #fff; }
-  .dl { display: inline-flex; align-items: center; gap: 6px; margin: 14px 8px 4px; font-size: 13px; color: var(--muted); text-decoration: none; }
-  .dl:hover { color: var(--accent); }
 
   #loading { position: absolute; inset: 0; display: grid; place-items: center; color: var(--muted); z-index: 15; }
   #loading.hidden { display: none; }
@@ -163,7 +167,6 @@
       <div class="booksel" id="booksel"></div>
       <h2>목차</h2>
       <div class="toc" id="toc"></div>
-      <a class="dl" id="dlLink" href="#" download>⬇ 이 권 epub 내려받기</a>
     </div>
   </div>
 
@@ -206,7 +209,6 @@
       localStorage.setItem('hd.lastbook', id);
       curData = await (await fetch(`content/book${id}.json`)).json();
       $('bookTitle').textContent = barTitle(curData.title);
-      $('dlLink').href = curBook.epub;
       document.querySelectorAll('#booksel button').forEach((b) => b.classList.toggle('active', b.dataset.id === id));
 
       // 본문 주입 (섹션 경계마다 컬럼 분리)
