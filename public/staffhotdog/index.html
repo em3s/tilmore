@@ -4,6 +4,15 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
 <title>스태프 핫도그</title>
+<!-- PWA: 홈 화면에 추가 시 풀스크린 앱처럼 -->
+<link rel="manifest" href="/tilmore/manifest.webmanifest" />
+<link rel="apple-touch-icon" href="/tilmore/icons/icon-192.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-title" content="스태프 핫도그" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="theme-color" content="#faf9f5" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#1d1d1b" media="(prefers-color-scheme: dark)" />
 <script>
   // 초기 테마를 렌더 전에 확정해 깜빡임 방지: 저장값 우선, 없으면 시스템 설정
   (function () {
@@ -70,9 +79,16 @@
     display: grid; place-items: center; flex: 0 0 auto;
   }
   .iconbtn:active { transform: scale(.94); }
+  .iconbtn.wide { width: auto; padding: 0 10px; font-size: 13px; gap: 4px; text-decoration: none; white-space: nowrap; }
   /* 제목·인디케이터는 고정 폭 → 가운데 스크러버가 들썩이지 않음 */
   #chapter { flex: 0 0 96px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  #pageInfo { flex: 0 0 44px; text-align: right; font-size: 10px; font-variant-numeric: tabular-nums; white-space: nowrap; opacity: .8; }
+  /* 페이지 숫자 = 목차 여는 탭 타깃(오른손 도달). 현재 페이지만 짧게 표시 */
+  #pageInfo {
+    flex: 0 0 auto; appearance: none; border: 1px solid var(--line); background: var(--bg);
+    color: var(--muted); border-radius: 7px; min-width: 30px; height: 26px; padding: 0 7px;
+    font: inherit; font-size: 12px; font-variant-numeric: tabular-nums; line-height: 1; cursor: pointer;
+  }
+  #pageInfo:active { transform: scale(.94); }
   #scrub { flex: 1; appearance: none; height: 4px; border-radius: 4px; background: var(--line); }
   #scrub::-webkit-slider-thumb { appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--accent); cursor: pointer; }
   #scrub::-moz-range-thumb { width: 16px; height: 16px; border: 0; border-radius: 50%; background: var(--accent); }
@@ -178,6 +194,7 @@
     <button class="iconbtn" id="menuBtn" aria-label="목차/책">☰</button>
     <span class="title" id="bookTitle">스태프 핫도그</span>
     <span class="spacer"></span>
+    <a class="iconbtn wide" id="srcLink" href="#" aria-label="원문(문서)으로 돌아가기" title="원문으로">📄 원문</a>
     <button class="iconbtn" id="themeBtn" aria-label="라이트/다크 전환">☾</button>
     <button class="iconbtn" id="fontDown" aria-label="글자 작게">A−</button>
     <button class="iconbtn" id="fontUp" aria-label="글자 크게">A+</button>
@@ -196,7 +213,7 @@
   <div class="bar bottom">
     <span id="chapter">—</span>
     <input type="range" id="scrub" min="0" max="0" value="0" />
-    <span id="pageInfo">0 / 0</span>
+    <button id="pageInfo" aria-label="목차 열기" title="목차">0</button>
   </div>
 
   <div class="sheet" id="sheet">
@@ -248,6 +265,7 @@
       localStorage.setItem('hd.lastbook', id);
       curData = await (await fetch(`content/book${id}.json`)).json();
       $('bookTitle').textContent = barTitle(curData.title);
+      $('srcLink').href = `/tilmore/staffhotdog/book${id}/`;
       document.querySelectorAll('#booksel button').forEach((b) => b.classList.toggle('active', b.dataset.id === id));
 
       // 본문 주입 (섹션 경계마다 컬럼 분리)
@@ -305,7 +323,7 @@
       if (!animate) pages.style.transition = 'none';
       pages.style.transform = `translateX(${-page * pageStep}px)`;
       if (!animate) requestAnimationFrame(() => pages.style.transition = 'transform .3s ease');
-      $('pageInfo').textContent = `${page + 1} / ${totalPages}`;
+      $('pageInfo').textContent = page + 1;
       $('scrub').value = page;
       $('chapter').textContent = curSectionLabel();
       document.querySelectorAll('#toc a').forEach((a) => {
@@ -385,6 +403,7 @@
     const openSheet = () => $('sheet').classList.add('open');
     const closeSheet = () => $('sheet').classList.remove('open');
     $('menuBtn').onclick = openSheet;
+    $('pageInfo').onclick = openSheet;   // 오른쪽 아래 페이지 숫자로도 목차 열기(오른손 도달)
     $('sheetBackdrop').onclick = closeSheet;
 
     // 리사이즈/회전 재계산
