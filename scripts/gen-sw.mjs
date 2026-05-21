@@ -21,25 +21,28 @@ function walk(dir) {
   return out;
 }
 
-// 프리캐시 대상: 리더 + 콘텐츠 + 이미지 + 아이콘 + manifest
+// 프리캐시 대상: 이미지 + 아이콘 + manifest + 이북 엔진 + 원문 페이지
 const files = [
   join(PUBLIC, 'manifest.webmanifest'),
   ...walk(join(PUBLIC, 'icons')),
-  ...walk(join(PUBLIC, 'staffhotdog/content')),
   ...walk(join(PUBLIC, 'staffhotdog/assets')),
 ];
 const urls = files.map((f) => BASE + '/' + relative(PUBLIC, f).split('\\').join('/'));
 urls.push(BASE + '/staffhotdog/');                 // 리다이렉트 스텁
 urls.push(BASE + '/staffhotdog-reader.js');        // 이북 엔진
-// 원문 페이지 HTML(이북 오버레이가 본문을 읽음) — 오프라인 즉시 가능하도록 프리캐시
-const index = JSON.parse(readFileSync(join(PUBLIC, 'staffhotdog/content/index.json'), 'utf8'));
-for (const b of index) urls.push(`${BASE}/staffhotdog/book${b.id}/`);
+// 권 id는 마크다운 소스 파일명에서 도출 → 원문 페이지 HTML 프리캐시(오프라인 이북)
+const PAGES = join(ROOT, 'src/content/docs/staffhotdog');
+for (const f of readdirSync(PAGES)) {
+  const m = f.match(/^book(\d+)\.md$/);
+  if (m) urls.push(`${BASE}/staffhotdog/book${m[1]}/`);
+}
 urls.sort();
 
 // 버전 = 프리캐시 대상 내용 해시 → 콘텐츠 바뀌면 캐시 갱신
 const hash = createHash('sha1');
 for (const f of files) hash.update(readFileSync(f));
 hash.update(readFileSync(join(PUBLIC, 'staffhotdog-reader.js')));
+for (const f of readdirSync(PAGES)) if (f.endsWith('.md')) hash.update(readFileSync(join(PAGES, f)));  // 콘텐츠(md) 변경 시 캐시 갱신
 hash.update(urls.join(','));
 const VERSION = 'tilmore-' + hash.digest('hex').slice(0, 10);
 
@@ -76,7 +79,7 @@ self.addEventListener('fetch', (e) => {
   if (req.mode === 'navigate' || req.destination === 'document') {
     e.respondWith(
       fetch(req).then((res) => { put(req, res.clone()); return res; })
-        .catch(() => caches.match(req).then((r) => r || caches.match(SCOPE + 'staffhotdog/')))
+        .catch(() => caches.match(req, { ignoreSearch: true }).then((r) => r || caches.match(SCOPE + 'staffhotdog/')))
     );
     return;
   }

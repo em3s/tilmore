@@ -67,6 +67,13 @@
   #hotdog-ebook #hd-pages table{border-collapse:collapse;width:100%;margin:1em 0;font-size:.9em;}
   #hotdog-ebook #hd-pages th,#hotdog-ebook #hd-pages td{padding:.5em .7em;border-bottom:1px solid var(--line);text-align:left;}
   #hotdog-ebook #hd-pages th{font-weight:600;background:rgba(127,127,127,.06);}
+  #hotdog-ebook #hd-pages .cover{height:100%;display:flex;flex-direction:column;justify-content:center;text-align:center;}
+  #hotdog-ebook #hd-pages .cover-series{font-size:.9em;letter-spacing:.35em;color:var(--muted);text-transform:uppercase;margin-bottom:.8em;font-weight:600;}
+  #hotdog-ebook #hd-pages .cover-num{font-family:"Times New Roman","Noto Serif KR",serif;font-style:italic;font-size:3.2em;margin:.2em 0;line-height:1;}
+  #hotdog-ebook #hd-pages .cover-title{font-size:2.6em;font-weight:700;margin:.5em 0 .3em;letter-spacing:-.02em;}
+  #hotdog-ebook #hd-pages .cover-sub{font-size:1.05em;color:var(--muted);margin-top:.5em;}
+  #hotdog-ebook #hd-pages .cover-rule{width:80px;height:1px;background:var(--line);margin:2em auto;}
+  #hotdog-ebook #hd-pages .cover-author{font-size:.9em;color:var(--muted);margin-top:1em;letter-spacing:.05em;}
   #hotdog-ebook #hd-pages .closing{text-align:center;margin-top:2em;color:var(--muted);}
   #hotdog-ebook #hd-pages .closing-mark{font-family:"Times New Roman",serif;font-style:italic;font-size:1.4em;}
   #hotdog-ebook #hd-pages [data-sec]{break-before:column;}
@@ -211,8 +218,27 @@
   const next = () => goTo(page + 1);
   const prev = () => goTo(page - 1);
 
+  // 메타데이터로 예쁜 표지(제목 페이지)를 합성 — 원문 문서는 깔끔히 두고 이북에서만 표지를 보여줌
+  function coverSection() {
+    const topic = ((document.title.split('—')[1] || '').split('|')[0] || '').trim() || document.title.split('|')[0].trim();
+    const sub = (document.querySelector('meta[name="description"]') || {}).content || '';
+    const esc = (s) => s.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+    return {
+      label: '표지',
+      html: `<div class="cover">
+        <div class="cover-series">STAFF HOTDOG · 스태프 핫도그</div>
+        <div class="cover-num">№ ${esc(bookId)}</div>
+        <div class="cover-title">${esc(topic)}</div>
+        ${sub ? `<div class="cover-sub">${esc(sub)}</div>` : ''}
+        <div class="cover-rule"></div>
+        <div class="cover-author">em3s</div>
+      </div>`,
+    };
+  }
+
   async function mount() {
     sections = buildSections();
+    sections.unshift(coverSection());
     pagesEl.innerHTML = sections.map((s, i) => `<div data-sec="${i}">${s.html}</div>`).join('');
     buildToc();
     const imgs = Array.from(pagesEl.querySelectorAll('img'));
@@ -221,22 +247,23 @@
     const saved = Number(localStorage.getItem('hd.page.' + bookId));
     goTo(Number.isFinite(saved) ? Math.min(saved, totalPages - 1) : 0, false);
 
-    // 권 목록 + 제목 (index.json)
-    try {
-      const books = await (await fetch(`${BASE}/staffhotdog/content/index.json`)).json();
-      const me = books.find((b) => b.id === bookId);
-      $('hd-title').textContent = me ? me.title.split('—')[0].trim() : (document.title.split('|')[0].trim());
-      const sel = $('hd-booksel');
-      books.forEach((b) => {
-        const a = document.createElement('a');
-        a.textContent = b.title.replace(/^스태프 핫도그\s*/, '').trim();
-        a.href = `${BASE}/staffhotdog/book${b.id}/?view=book`;
-        if (b.id === bookId) a.className = 'active';
-        sel.appendChild(a);
+    // 제목: 페이지 타이틀("스태프 핫도그 #N — Topic | tilmore")에서
+    $('hd-title').textContent = document.title.split('—')[0].trim() || document.title.split('|')[0].trim();
+    // 권 목록: 페이지 사이드바 nav의 원문 링크에서 추출 (별도 인덱스 파일 불필요)
+    const sel = $('hd-booksel'); const seen = {};
+    Array.from(document.querySelectorAll('a[href*="/staffhotdog/book"]'))
+      .filter((a) => !root.contains(a))
+      .forEach((a) => {
+        const m = a.getAttribute('href').match(/\/staffhotdog\/book(\d+)\/?(?:$|[?#])/);
+        if (!m || seen[m[1]]) return; seen[m[1]] = true;
+        const lk = document.createElement('a');
+        lk.textContent = a.textContent.trim();
+        lk.href = `${BASE}/staffhotdog/book${m[1]}/?view=book`;
+        lk.dataset.id = m[1];
+        if (m[1] === bookId) lk.className = 'active';
+        sel.appendChild(lk);
       });
-    } catch (e) {
-      $('hd-title').textContent = document.title.split('|')[0].trim();
-    }
+    Array.from(sel.children).sort((a, b) => a.dataset.id.localeCompare(b.dataset.id)).forEach((n) => sel.appendChild(n));
   }
 
   // 원문으로: 같은 경로에서 ?view=book 제거 → 전체 새로고침
