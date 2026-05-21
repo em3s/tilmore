@@ -14,6 +14,10 @@ concurrency:
   group: pages
   cancel-in-progress: false
 
+# Node 20 액션 deprecation 대응 — 모든 JS 액션을 Node 24로 강제(중첩 upload-artifact 포함)
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
