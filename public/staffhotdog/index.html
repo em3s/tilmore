@@ -55,7 +55,7 @@
   .iconbtn:active { transform: scale(.94); }
   /* 제목·인디케이터는 고정 폭 → 가운데 스크러버가 들썩이지 않음 */
   #chapter { flex: 0 0 96px; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  #pageInfo { flex: 0 0 50px; text-align: right; font-size: 11px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  #pageInfo { flex: 0 0 44px; text-align: right; font-size: 10px; font-variant-numeric: tabular-nums; white-space: nowrap; opacity: .8; }
   #scrub { flex: 1; appearance: none; height: 4px; border-radius: 4px; background: var(--line); }
   #scrub::-webkit-slider-thumb { appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--accent); cursor: pointer; }
   #scrub::-moz-range-thumb { width: 16px; height: 16px; border: 0; border-radius: 50%; background: var(--accent); }
@@ -71,6 +71,23 @@
   .zone { position: absolute; top: var(--chrome-h); bottom: var(--chrome-h); width: 32%; z-index: 10; }
   .zone.l { left: 0; } .zone.r { right: 0; }
   .zone.c { left: 32%; right: 32%; z-index: 9; }
+  /* 데스크탑(마우스) 전용 좌우 화살표 버튼 — 터치 기기에선 탭존/스와이프로 충분하므로 숨김 */
+  .navarrow { display: none; }
+  @media (hover: hover) and (pointer: fine) {
+    .navarrow {
+      position: absolute; top: 50%; transform: translateY(-50%); z-index: 15;
+      display: grid; place-items: center;
+      width: 44px; height: 44px; border-radius: 50%;
+      border: 1px solid var(--line); background: color-mix(in srgb, var(--panel) 88%, transparent);
+      backdrop-filter: blur(6px); color: var(--ink); font-size: 26px; line-height: 1; cursor: pointer;
+      transition: opacity .25s ease, border-color .15s, color .15s;
+    }
+    .navarrow.l { left: 14px; }
+    .navarrow.r { right: 14px; }
+    .navarrow:hover { border-color: var(--accent); color: var(--accent); }
+    .navarrow:active { transform: translateY(-50%) scale(.92); }
+    body.immersive .navarrow { opacity: 0; pointer-events: none; }
+  }
 
   /* ===== content styles ===== */
   #pages h1, #pages h2, #pages h3 { font-weight: 700; letter-spacing: -.01em; line-height: 1.35; break-after: avoid; }
@@ -153,6 +170,8 @@
     <div class="zone l" id="zoneL"></div>
     <div class="zone c" id="zoneC"></div>
     <div class="zone r" id="zoneR"></div>
+    <button class="navarrow l" id="arrowL" aria-label="이전">‹</button>
+    <button class="navarrow r" id="arrowR" aria-label="다음">›</button>
     <div id="loading">불러오는 중…</div>
   </div>
 
@@ -285,6 +304,8 @@
     $('zoneR').onclick = () => { if (!justSwiped) next(); };
     $('zoneL').onclick = () => { if (!justSwiped) prev(); };
     $('zoneC').onclick = () => { if (!justSwiped) document.body.classList.toggle('immersive'); };
+    $('arrowL').onclick = prev;
+    $('arrowR').onclick = next;
     document.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
       if (e.key === 'ArrowLeft') prev();
