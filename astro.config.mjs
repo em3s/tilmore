@@ -24,7 +24,7 @@ export default defineConfig({
         { tag: 'meta', attrs: { name: 'mobile-web-app-capable', content: 'yes' } },
         { tag: 'script', content: "if('serviceWorker' in navigator){addEventListener('load',function(){navigator.serviceWorker.register('/tilmore/sw.js',{scope:'/tilmore/'}).catch(function(){})})}" },
         // ?view=book 이면 그 원문 페이지 위에 이북 엔진을 오버레이로 마운트
-        { tag: 'script', content: "(function(){try{var u=new URL(location.href);if(u.searchParams.get('view')==='book'&&/\\/staffhotdog\\/book\\d+\\//.test(u.pathname)){document.documentElement.classList.add('hd-ebook-active');var s=document.createElement('script');s.src='/tilmore/staffhotdog-reader.js';s.defer=true;document.head.appendChild(s);}}catch(e){}})();" },
+        { tag: 'script', content: "(function(){try{var u=new URL(location.href);if(u.searchParams.get('view')==='book'&&/\\/staffhotdog\\/book\\d+\\/?/.test(u.pathname)){document.documentElement.classList.add('hd-ebook-active');var s=document.createElement('script');s.src='/tilmore/staffhotdog-reader.js';s.defer=true;document.head.appendChild(s);}}catch(e){}})();" },
       ],
       defaultLocale: 'root',
       locales: {

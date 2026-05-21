@@ -85,7 +85,8 @@
   html.hd-ebook-active,html.hd-ebook-active body{overflow:hidden;}
   `;
 
-  const idMatch = location.pathname.match(/\/staffhotdog\/book(\d+)\//);
+  function boot() {
+  const idMatch = location.pathname.match(/\/staffhotdog\/book(\d+)\/?/);
   if (!idMatch) return;
   const bookId = idMatch[1];
   const src = document.querySelector('.sl-markdown-content');
@@ -300,4 +301,9 @@
   }, 150); });
 
   mount();
+  }
+
+  // 동적 주입 스크립트는 defer가 무시되므로 DOM 준비를 직접 기다린다(WebKit에서 본문 전 실행 방지)
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, { once: true });
+  else boot();
 })();
