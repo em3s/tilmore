@@ -1,6 +1,6 @@
 // epub → 웹 리더용 콘텐츠 추출.
 // 각 권의 spine 순서대로 XHTML body를 뽑고, 이미지를 복사하고, TOC 라벨을 붙여
-// public/reader/content/bookNN.json 으로 저장한다. 외부 의존성 없음(unzip만 사용).
+// public/staffhotdog/content/bookNN.json 으로 저장한다. 외부 의존성 없음(unzip만 사용).
 //
 // 재실행: node scripts/extract-hotdog.mjs
 import { execFileSync } from 'node:child_process';
@@ -9,8 +9,8 @@ import { join } from 'node:path';
 
 const ROOT = new URL('..', import.meta.url).pathname;
 const EPUB_DIR = join(ROOT, 'public/staff_hotdog');
-const OUT_DIR = join(ROOT, 'public/reader/content');
-const ASSET_DIR = join(ROOT, 'public/reader/assets');
+const OUT_DIR = join(ROOT, 'public/staffhotdog/content');
+const ASSET_DIR = join(ROOT, 'public/staffhotdog/assets');
 
 const BOOKS = ['01', '02', '03'];
 

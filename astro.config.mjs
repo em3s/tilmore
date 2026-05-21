@@ -31,10 +31,10 @@ export default defineConfig({
         {
           label: '스태프 핫도그',
           items: [
-            { label: '리더 열기', link: '/reader/', attrs: { target: '_blank' } },
-            { label: '#1 — MapReduce', link: '/reader/?book=01', attrs: { target: '_blank' } },
-            { label: '#2 — Latency Numbers', link: '/reader/?book=02', attrs: { target: '_blank' } },
-            { label: '#3 — Bloom Filter', link: '/reader/?book=03', attrs: { target: '_blank' } },
+            { label: '리더 열기', link: '/staffhotdog/', attrs: { target: '_blank' } },
+            { label: '#1 — MapReduce', link: '/staffhotdog/?book=01', attrs: { target: '_blank' } },
+            { label: '#2 — Latency Numbers', link: '/staffhotdog/?book=02', attrs: { target: '_blank' } },
+            { label: '#3 — Bloom Filter', link: '/staffhotdog/?book=03', attrs: { target: '_blank' } },
           ],
         },
       ],
