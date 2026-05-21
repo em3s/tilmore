@@ -1,6 +1,15 @@
 # 작업 지침
 
-이 repo는 **"문제해결을 위한 수학적 사고"** 실라버스를 담는다.
+이 repo는 **tilmore**(Today I Learned and More) — Astro + Starlight 사이트. 두 시리즈를 담는다.
+
+- **문제해결을 위한 수학적 사고** — 수학 실라버스(스크롤형 Starlight 문서). 아래 톤·회차 골격·작성 원칙은 주로 이 시리즈용.
+- **스태프 핫도그** — 한 입 엔지니어링 노트. 원문(문서) + `?view=book` 이북. 콘텐츠 작성은 [`docs/staffhotdog-content.md`](docs/staffhotdog-content.md), 디자인·렌더링은 [`docs/staffhotdog-design.md`](docs/staffhotdog-design.md).
+
+## 구조 (핵심)
+
+- 콘텐츠는 **마크다운이 단일 소스**. 수학: `src/content/docs/sessions/wN.md`. 핫도그: `src/content/docs/staffhotdog/bookNN.md`.
+- 핫도그 렌더링은 **epub 아님** — 마크다운 → Starlight 원문 + 이북 오버레이(`public/staffhotdog-reader.js`가 렌더된 본문을 페이지네이션, 표지는 frontmatter로 자동 합성). JSON·생성기·epub 없음.
+- 배포: `main` 푸시 → GitHub Pages 자동. PWA: `scripts/gen-sw.mjs` → `public/sw.js`(gitignore).
 
 ## 톤
 
@@ -16,9 +25,9 @@
 - 이후엔 자연스러운 쪽 사용.
 - 외래어 한글 음차("노름") 피하고 자연스러운 한국어("크기") 사용.
 
-## 회차 페이지 골격
+## 회차 페이지 골격 (수학 시리즈)
 
-W1을 기준 패턴으로. 각 회차는 다음 순서.
+W1을 기준 패턴으로. 각 회차는 다음 순서. (스태프 핫도그는 자체 구조 — content/design 문서 참고.)
 
 1. **한눈에** — 회차 흐름을 한 화면에 잡는 5개 안팎의 짧은 bullet. 약어/한국어 위주, bilingual은 본문에서.
 2. **문제 상황** — 추상 한 문장 → 구체적 경험 인용. "이런 경험이 있는가? > [회의실/현장 한 줄]" 형식.

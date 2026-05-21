@@ -63,6 +63,7 @@
   #hotdog-ebook #hd-pages .callout-blue{background:rgba(56,138,221,.08);border-color:rgba(56,138,221,.35);}
   #hotdog-ebook #hd-pages .callout-amber{background:rgba(186,117,23,.08);border-color:rgba(186,117,23,.35);}
   #hotdog-ebook #hd-pages .callout-teal{background:rgba(29,158,117,.08);border-color:rgba(29,158,117,.35);}
+  #hotdog-ebook #hd-pages .callout-gray{background:rgba(127,127,127,.08);border-color:rgba(127,127,127,.35);}
   #hotdog-ebook #hd-pages .callout-title{font-weight:700;margin:0 0 .3em;}
   #hotdog-ebook #hd-pages table{border-collapse:collapse;width:100%;margin:1em 0;font-size:.9em;}
   #hotdog-ebook #hd-pages th,#hotdog-ebook #hd-pages td{padding:.5em .7em;border-bottom:1px solid var(--line);text-align:left;}

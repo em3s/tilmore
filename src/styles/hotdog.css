@@ -48,6 +48,7 @@
 .sl-markdown-content .callout-blue   { background: rgba(56, 138, 221, 0.08);  border-color: rgba(56, 138, 221, 0.4); }
 .sl-markdown-content .callout-amber  { background: rgba(186, 117, 23, 0.08);  border-color: rgba(186, 117, 23, 0.4); }
 .sl-markdown-content .callout-teal   { background: rgba(29, 158, 117, 0.08);  border-color: rgba(29, 158, 117, 0.4); }
+.sl-markdown-content .callout-gray   { background: rgba(127, 127, 127, 0.08); border-color: rgba(127, 127, 127, 0.4); }
 
 /* 닫는 글 마무리 */
 .sl-markdown-content .closing { text-align: center; margin-top: 2.5em; color: var(--sl-color-gray-3); }
