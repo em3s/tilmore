@@ -4,6 +4,14 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
 <title>스태프 핫도그</title>
+<script>
+  // 초기 테마를 렌더 전에 확정해 깜빡임 방지: 저장값 우선, 없으면 시스템 설정
+  (function () {
+    var t = localStorage.getItem('hd.theme');
+    if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    document.documentElement.dataset.theme = t;
+  })();
+</script>
 <style>
   :root {
     --bg: #faf9f5;
@@ -14,8 +22,17 @@
     --accent: #c2410c;
     --chrome-h: 48px;
   }
+  /* 다크 = 따뜻한 먹색 종이. 수동 토글(data-theme)이 우선, 미설정 시 시스템 설정 폴백 */
+  :root[data-theme="dark"] {
+    --bg: #1d1d1b;
+    --ink: #ebebe9;
+    --muted: #9a9a92;
+    --line: rgba(127,127,127,.28);
+    --panel: #232320;
+    --accent: #fb923c;
+  }
   @media (prefers-color-scheme: dark) {
-    :root {
+    :root:not([data-theme]) {
       --bg: #1d1d1b;
       --ink: #ebebe9;
       --muted: #9a9a92;
@@ -161,6 +178,7 @@
     <button class="iconbtn" id="menuBtn" aria-label="목차/책">☰</button>
     <span class="title" id="bookTitle">스태프 핫도그</span>
     <span class="spacer"></span>
+    <button class="iconbtn" id="themeBtn" aria-label="라이트/다크 전환">☾</button>
     <button class="iconbtn" id="fontDown" aria-label="글자 작게">A−</button>
     <button class="iconbtn" id="fontUp" aria-label="글자 크게">A+</button>
   </div>
@@ -352,6 +370,16 @@
     }
     $('fontUp').onclick = () => setFont(fs + 1);
     $('fontDown').onclick = () => setFont(fs - 1);
+
+    // 라이트/다크 토글 — 현재가 다크면 ☀(라이트로), 라이트면 ☾(다크로)
+    const syncThemeIcon = () => { $('themeBtn').textContent = document.documentElement.dataset.theme === 'dark' ? '☀' : '☾'; };
+    syncThemeIcon();
+    $('themeBtn').onclick = () => {
+      const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+      document.documentElement.dataset.theme = next;
+      localStorage.setItem('hd.theme', next);
+      syncThemeIcon();
+    };
 
     // 메뉴 시트
     const openSheet = () => $('sheet').classList.add('open');
