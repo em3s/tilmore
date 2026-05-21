@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+<title>스태프 핫도그</title>
+<style>
+  :root {
+    --bg: #faf9f5;
+    --ink: #1a1a18;
+    --muted: #73726c;
+    --line: rgba(127,127,127,.22);
+    --panel: #fbfaf6;
+    --accent: #c2410c;
+    --chrome-h: 48px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1d1d1b;
+      --ink: #ebebe9;
+      --muted: #9a9a92;
+      --line: rgba(127,127,127,.28);
+      --panel: #232320;
+      --accent: #fb923c;
+    }
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; margin: 0; overscroll-behavior: none; }
+  body {
+    font-family: "Apple SD Gothic Neo", "Pretendard", "Noto Sans CJK KR", "Malgun Gothic", system-ui, sans-serif;
+    background: var(--bg); color: var(--ink);
+    overflow: hidden; touch-action: pan-y;
+    word-break: keep-all; overflow-wrap: break-word;
+  }
+
+  /* ===== chrome (top/bottom bars) — auto-hide ===== */
+  .bar {
+    position: fixed; left: 0; right: 0; height: var(--chrome-h);
+    display: flex; align-items: center; gap: 8px; padding: 0 12px;
+    background: color-mix(in srgb, var(--panel) 92%, transparent);
+    backdrop-filter: blur(8px); z-index: 20;
+    transition: transform .25s ease;
+  }
+  .bar.top { top: 0; border-bottom: 1px solid var(--line); }
+  .bar.bottom { bottom: 0; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted); }
+  body.immersive .bar.top { transform: translateY(-100%); }
+  body.immersive .bar.bottom { transform: translateY(100%); }
+  .title { font-weight: 700; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .spacer { flex: 1; }
+  .iconbtn {
+    appearance: none; border: 1px solid var(--line); background: var(--bg); color: var(--ink);
+    width: 34px; height: 34px; border-radius: 9px; font-size: 16px; cursor: pointer;
+    display: grid; place-items: center; flex: 0 0 auto;
+  }
+  .iconbtn:active { transform: scale(.94); }
+  #pageInfo { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  #scrub { flex: 1; appearance: none; height: 4px; border-radius: 4px; background: var(--line); }
+  #scrub::-webkit-slider-thumb { appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--accent); cursor: pointer; }
+  #scrub::-moz-range-thumb { width: 16px; height: 16px; border: 0; border-radius: 50%; background: var(--accent); }
+
+  /* ===== reading stage ===== */
+  #stage { position: fixed; inset: 0; }
+  #viewport { position: absolute; inset: 0; overflow: hidden; padding: calc(var(--chrome-h) + 10px) 22px calc(var(--chrome-h) + 6px); }
+  #pages {
+    height: 100%; column-gap: 44px; column-fill: auto;
+    will-change: transform; line-height: 1.7; font-size: var(--fs, 17px);
+  }
+  /* tap zones */
+  .zone { position: absolute; top: var(--chrome-h); bottom: var(--chrome-h); width: 32%; z-index: 10; }
+  .zone.l { left: 0; } .zone.r { right: 0; }
+  .zone.c { left: 32%; right: 32%; z-index: 9; }
+
+  /* ===== content styles (epub 원본 이식) ===== */
+  #pages h1, #pages h2, #pages h3 { font-weight: 700; letter-spacing: -.01em; line-height: 1.35; break-after: avoid; }
+  #pages h1 { font-size: 1.7em; margin: .2em 0 .6em; }
+  #pages h2 { font-size: 1.3em; margin: 1.6em 0 .5em; border-bottom: 1px solid var(--line); padding-bottom: .3em; }
+  #pages h3 { font-size: 1.05em; margin: 1.3em 0 .4em; }
+  #pages p { margin: .8em 0; text-align: justify; }
+  #pages ul, #pages ol { margin: .8em 0; padding-left: 1.3em; }
+  #pages li { margin: .4em 0; }
+  #pages strong { font-weight: 700; }
+  #pages code, #pages pre { font-family: "JetBrains Mono","D2Coding","SF Mono",Menlo,Consolas,monospace; font-size: .88em; }
+  #pages code { background: rgba(127,127,127,.12); padding: .1em .35em; border-radius: 3px; }
+  #pages pre { background: rgba(127,127,127,.08); padding: .9em 1em; border-radius: 6px; border: 1px solid var(--line); overflow-x: auto; line-height: 1.55; break-inside: avoid; }
+  #pages pre code { background: transparent; padding: 0; }
+  #pages .figure { margin: 1.1em 0; text-align: center; background: #fff; padding: .4em; border-radius: 8px; border: 1px solid var(--line); break-inside: avoid; }
+  #pages .figure img { max-width: 100%; max-height: 60vh; height: auto; display: block; margin: 0 auto; }
+  #pages .callout { margin: 1.2em 0; padding: .9em 1.1em; border-radius: 8px; border: 1px solid; break-inside: avoid; }
+  #pages .callout-purple { background: rgba(127,119,221,.08); border-color: rgba(127,119,221,.35); }
+  #pages .callout-blue   { background: rgba(56,138,221,.08);  border-color: rgba(56,138,221,.35); }
+  #pages .callout-amber  { background: rgba(186,117,23,.08);  border-color: rgba(186,117,23,.35); }
+  #pages .callout-teal   { background: rgba(29,158,117,.08);  border-color: rgba(29,158,117,.35); }
+  #pages .callout-title { font-weight: 700; margin: 0 0 .3em; }
+  #pages table { border-collapse: collapse; width: 100%; margin: 1em 0; font-size: .9em; break-inside: avoid; }
+  #pages th, #pages td { padding: .5em .7em; border-bottom: 1px solid var(--line); text-align: left; }
+  #pages th { font-weight: 600; background: rgba(127,127,127,.06); }
+  /* cover */
+  #pages .cover { height: 100%; display: flex; flex-direction: column; justify-content: center; text-align: center; }
+  #pages .cover-series { font-size: .9em; letter-spacing: .35em; color: var(--muted); text-transform: uppercase; margin-bottom: .8em; font-weight: 600; }
+  #pages .cover-num { font-family: "Times New Roman","Noto Serif KR",serif; font-style: italic; font-size: 3.2em; margin: .2em 0; line-height: 1; }
+  #pages .cover-title { font-size: 2.6em; font-weight: 700; margin: .5em 0 .3em; letter-spacing: -.02em; }
+  #pages .cover-sub { font-size: 1.05em; color: var(--muted); margin-top: .5em; }
+  #pages .cover-rule { width: 80px; height: 1px; background: var(--line); margin: 2em auto; }
+  #pages .cover-author { font-size: .9em; color: var(--muted); margin-top: 1em; letter-spacing: .05em; }
+  #pages .closing { text-align: center; margin-top: 2em; color: var(--muted); }
+  #pages .closing-mark { font-family: "Times New Roman",serif; font-style: italic; font-size: 1.4em; }
+  #pages [data-sec] { break-before: column; }
+  #pages [data-sec]:first-child { break-before: auto; }
+
+  /* ===== TOC / book sheet ===== */
+  .sheet { position: fixed; inset: 0; z-index: 40; display: none; }
+  .sheet.open { display: block; }
+  .sheet .backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.4); }
+  .sheet .panel {
+    position: absolute; top: 0; bottom: 0; left: 0; width: min(86vw, 360px);
+    background: var(--panel); border-right: 1px solid var(--line);
+    padding: 16px 12px; overflow-y: auto;
+    transform: translateX(-100%); transition: transform .25s ease;
+  }
+  .sheet.open .panel { transform: none; }
+  .sheet h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 8px 8px 6px; }
+  .booksel { display: flex; flex-direction: column; gap: 4px; margin-bottom: 14px; }
+  .booksel button { text-align: left; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); font: inherit; cursor: pointer; }
+  .booksel button.active { border-color: var(--accent); color: var(--accent); font-weight: 700; }
+  .toc a { display: block; padding: 9px 12px; border-radius: 8px; color: var(--ink); text-decoration: none; }
+  .toc a:active, .toc a.active { background: var(--accent); color: #fff; }
+  .dl { display: inline-flex; align-items: center; gap: 6px; margin: 14px 8px 4px; font-size: 13px; color: var(--muted); text-decoration: none; }
+  .dl:hover { color: var(--accent); }
+
+  #loading { position: absolute; inset: 0; display: grid; place-items: center; color: var(--muted); z-index: 15; }
+  #loading.hidden { display: none; }
+</style>
+</head>
+<body>
+  <div class="bar top">
+    <button class="iconbtn" id="menuBtn" aria-label="목차/책">☰</button>
+    <span class="title" id="bookTitle">스태프 핫도그</span>
+    <span class="spacer"></span>
+    <button class="iconbtn" id="fontDown" aria-label="글자 작게">A−</button>
+    <button class="iconbtn" id="fontUp" aria-label="글자 크게">A+</button>
+  </div>
+
+  <div id="stage">
+    <div id="viewport"><div id="pages"></div></div>
+    <div class="zone l" id="zoneL"></div>
+    <div class="zone c" id="zoneC"></div>
+    <div class="zone r" id="zoneR"></div>
+    <div id="loading">불러오는 중…</div>
+  </div>
+
+  <div class="bar bottom">
+    <span id="chapter">—</span>
+    <input type="range" id="scrub" min="0" max="0" value="0" />
+    <span id="pageInfo">0 / 0</span>
+  </div>
+
+  <div class="sheet" id="sheet">
+    <div class="backdrop" id="sheetBackdrop"></div>
+    <div class="panel">
+      <h2>권 선택</h2>
+      <div class="booksel" id="booksel"></div>
+      <h2>목차</h2>
+      <div class="toc" id="toc"></div>
+      <a class="dl" id="dlLink" href="#" download>⬇ 이 권 epub 내려받기</a>
+    </div>
+  </div>
+
+  <script>
+  (function () {
+    const $ = (id) => document.getElementById(id);
+    const pages = $('pages'), viewport = $('viewport');
+    let books = [], curBook = null, curData = null;
+    let page = 0, totalPages = 0, pageStep = 0, sectionPages = [];
+    let fs = Number(localStorage.getItem('hd.fs')) || 17;
+    document.documentElement.style.setProperty('--fs', fs + 'px');
+
+    const fmtTitle = (t) => t.replace(/^스태프 핫도그\s*/, '').trim();
+
+    async function init() {
+      try {
+        books = await (await fetch('content/index.json')).json();
+      } catch (e) { $('loading').textContent = '콘텐츠를 불러오지 못했습니다.'; return; }
+      renderBookSel();
+      const want = new URLSearchParams(location.search).get('book') || localStorage.getItem('hd.lastbook');
+      const start = books.find((b) => b.id === want) || books[0];
+      await loadBook(start.id);
+    }
+
+    function renderBookSel() {
+      const wrap = $('booksel'); wrap.innerHTML = '';
+      books.forEach((b) => {
+        const btn = document.createElement('button');
+        btn.textContent = fmtTitle(b.title);
+        btn.dataset.id = b.id;
+        btn.onclick = () => { closeSheet(); if (b.id !== (curBook && curBook.id)) loadBook(b.id); };
+        wrap.appendChild(btn);
+      });
+    }
+
+    async function loadBook(id) {
+      $('loading').classList.remove('hidden');
+      curBook = books.find((b) => b.id === id);
+      localStorage.setItem('hd.lastbook', id);
+      curData = await (await fetch(`content/book${id}.json`)).json();
+      $('bookTitle').textContent = fmtTitle(curData.title);
+      $('dlLink').href = curBook.epub;
+      document.querySelectorAll('#booksel button').forEach((b) => b.classList.toggle('active', b.dataset.id === id));
+
+      // 본문 주입 (섹션 경계마다 컬럼 분리)
+      pages.innerHTML = curData.sections.map((s, i) =>
+        `<div data-sec="${i}" data-label="${(s.label || '').replace(/"/g,'&quot;')}">${s.html}</div>`
+      ).join('');
+      // 표지 다음 장은 새 컬럼에서 시작하도록: 첫 섹션이 표지면 그대로 둠
+
+      buildToc();
+      // 이미지 로드 후 페이지 수 확정
+      const imgs = Array.from(pages.querySelectorAll('img'));
+      await Promise.all(imgs.map((im) => im.complete ? null : new Promise((r) => { im.onload = im.onerror = r; })));
+      measure();
+      const saved = Number(localStorage.getItem('hd.page.' + id));
+      goTo(Number.isFinite(saved) ? Math.min(saved, totalPages - 1) : 0, false);
+      $('loading').classList.add('hidden');
+    }
+
+    function buildToc() {
+      const toc = $('toc'); toc.innerHTML = '';
+      curData.sections.forEach((s, i) => {
+        if (!s.label) return;
+        const a = document.createElement('a');
+        a.textContent = s.label; a.href = '#'; a.dataset.sec = i;
+        a.onclick = (e) => { e.preventDefault(); closeSheet(); goTo(sectionPages[i] || 0); };
+        toc.appendChild(a);
+      });
+    }
+
+    function measure() {
+      pages.style.transition = 'none';
+      pages.style.transform = 'translateX(0)';
+      const vw = pages.clientWidth;            // 컬럼 폭 = 패딩 제외 뷰포트 폭
+      const gap = parseFloat(getComputedStyle(pages).columnGap) || 0;
+      pages.style.columnWidth = vw + 'px';
+      pageStep = vw + gap;
+      totalPages = Math.max(1, Math.round((pages.scrollWidth + gap) / pageStep));
+      const pl = pages.getBoundingClientRect().left;
+      sectionPages = curData.sections.map((_, i) => {
+        const el = pages.querySelector(`[data-sec="${i}"]`);
+        return el ? Math.round((el.getBoundingClientRect().left - pl) / pageStep) : 0;
+      });
+      $('scrub').max = totalPages - 1;
+      requestAnimationFrame(() => { pages.style.transition = 'transform .3s ease'; });
+    }
+
+    function curSectionLabel() {
+      let label = '';
+      for (let i = 0; i < sectionPages.length; i++) if (sectionPages[i] <= page) label = curData.sections[i].label || label;
+      return label;
+    }
+
+    function goTo(p, animate = true) {
+      page = Math.max(0, Math.min(p, totalPages - 1));
+      if (!animate) pages.style.transition = 'none';
+      pages.style.transform = `translateX(${-page * pageStep}px)`;
+      if (!animate) requestAnimationFrame(() => pages.style.transition = 'transform .3s ease');
+      $('pageInfo').textContent = `${page + 1} / ${totalPages}`;
+      $('scrub').value = page;
+      $('chapter').textContent = curSectionLabel();
+      document.querySelectorAll('#toc a').forEach((a) => {
+        a.classList.toggle('active', sectionPages[+a.dataset.sec] <= page &&
+          (+a.dataset.sec === sectionPages.length - 1 || sectionPages[+a.dataset.sec + 1] > page));
+      });
+      if (curBook) localStorage.setItem('hd.page.' + curBook.id, page);
+    }
+    const next = () => goTo(page + 1);
+    const prev = () => goTo(page - 1);
+
+    // ===== 입력: 탭 존, 스와이프, 키보드, 스크럽 =====
+    $('zoneR').onclick = next;
+    $('zoneL').onclick = prev;
+    $('zoneC').onclick = () => document.body.classList.toggle('immersive');
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+      if (e.key === 'ArrowLeft') prev();
+    });
+    $('scrub').addEventListener('input', (e) => goTo(+e.target.value));
+
+    // 손가락 따라가는 스와이프
+    let dragX = 0, dragging = false, moved = false;
+    viewport.addEventListener('touchstart', (e) => {
+      if (e.touches.length !== 1) return;
+      dragging = true; moved = false; dragX = e.touches[0].clientX;
+      pages.style.transition = 'none';
+    }, { passive: true });
+    viewport.addEventListener('touchmove', (e) => {
+      if (!dragging) return;
+      const dx = e.touches[0].clientX - dragX;
+      if (Math.abs(dx) > 6) moved = true;
+      const base = -page * pageStep;
+      let t = base + dx;
+      const min = -(totalPages - 1) * pageStep;
+      if (t > 0) t = t * .35;                 // 양끝 고무줄
+      if (t < min) t = min + (t - min) * .35;
+      pages.style.transform = `translateX(${t}px)`;
+    }, { passive: true });
+    viewport.addEventListener('touchend', (e) => {
+      if (!dragging) return;
+      dragging = false;
+      pages.style.transition = 'transform .3s ease';
+      const dx = e.changedTouches[0].clientX - dragX;
+      const thresh = Math.min(80, pageStep * .2);
+      if (dx <= -thresh) next(); else if (dx >= thresh) prev(); else goTo(page);
+      // 탭 존 클릭과 스와이프 충돌 방지: 움직였으면 다음 click 무시
+      if (moved) { const swallow = (ev) => { ev.stopPropagation(); ev.preventDefault(); };
+        viewport.addEventListener('click', swallow, { capture: true, once: true }); }
+    }, { passive: true });
+
+    // 글자 크기
+    function setFont(v) {
+      fs = Math.max(13, Math.min(24, v)); localStorage.setItem('hd.fs', fs);
+      document.documentElement.style.setProperty('--fs', fs + 'px');
+      const label = curSectionLabel();
+      measure();
+      const i = curData.sections.findIndex((s) => s.label === label);
+      goTo(i >= 0 ? sectionPages[i] : 0, false);
+    }
+    $('fontUp').onclick = () => setFont(fs + 1);
+    $('fontDown').onclick = () => setFont(fs - 1);
+
+    // 메뉴 시트
+    const openSheet = () => $('sheet').classList.add('open');
+    const closeSheet = () => $('sheet').classList.remove('open');
+    $('menuBtn').onclick = openSheet;
+    $('sheetBackdrop').onclick = closeSheet;
+
+    // 리사이즈/회전 재계산
+    let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => {
+      const label = curSectionLabel(); measure();
+      const i = curData.sections.findIndex((s) => s.label === label);
+      goTo(i >= 0 ? sectionPages[i] : Math.min(page, totalPages - 1), false);
+    }, 150); });
+
+    init();
+  })();
+  </script>
+</body>
+</html>
