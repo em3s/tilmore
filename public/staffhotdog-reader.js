@@ -144,22 +144,21 @@
   root.style.setProperty('--hd-fs', fs + 'px');
 
   // 원문 콘텐츠를 복제 → 불필요 요소 제거 → h2(챕터)별 섹션으로 그룹
+  // 챕터(h2) 단위로 분할. 콘텐츠 표준이 일관(평탄 구조, h2는 Starlight가
+  // div.sl-heading-wrapper로 감쌈)이므로 한 가지 경로만 다룬다.
   function buildSections() {
     const clone = src.cloneNode(true);
-    clone.querySelectorAll('.ebook-launch, .sl-anchor-link, a.anchor, .anchor-link, a[aria-hidden="true"]').forEach((e) => e.remove());
-    const label = (el) => { const h = el.querySelector('h2, h3'); return h ? h.textContent.trim() : ''; };
-    // Starlight는 챕터(##)를 <section>으로 감싼다. 그 단위가 곧 챕터.
-    let secs = Array.from(clone.querySelectorAll(':scope > section')).map((el) => ({ label: label(el), html: el.innerHTML }));
-    if (!secs.length) {
-      // 폴백: section 래핑이 없으면 h2 기준으로 묶음
-      const grp = []; let cur = null;
-      Array.from(clone.childNodes).forEach((node) => {
-        if (node.nodeType === 1 && node.tagName === 'H2') { cur = { label: node.textContent.trim(), nodes: [node] }; grp.push(cur); }
-        else { if (!cur) { cur = { label: '', nodes: [] }; grp.push(cur); } cur.nodes.push(node); }
-      });
-      secs = grp.map((s) => { const d = document.createElement('div'); s.nodes.forEach((n) => d.appendChild(n.cloneNode(true))); return { label: s.label, html: d.innerHTML }; });
-    }
-    return secs.filter((s) => s.html.trim());
+    clone.querySelectorAll('.ebook-launch, .sl-anchor-link, a[aria-hidden="true"]').forEach((e) => e.remove());
+    const sections = [];
+    let cur = null;
+    Array.from(clone.children).forEach((child) => {
+      const h2 = child.tagName === 'H2' ? child : child.querySelector(':scope > h2');
+      if (h2) { cur = { label: h2.textContent.trim(), d: document.createElement('div') }; sections.push(cur); }
+      else if (!cur) { cur = { label: '', d: document.createElement('div') }; sections.push(cur); }
+      cur.d.appendChild(child.cloneNode(true));
+    });
+    sections.forEach((s) => { s.html = s.d.innerHTML; delete s.d; });
+    return sections.filter((s) => s.html.trim());
   }
 
   function buildToc() {
