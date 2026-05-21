@@ -29,12 +29,17 @@ const files = [
   ...walk(join(PUBLIC, 'staffhotdog/assets')),
 ];
 const urls = files.map((f) => BASE + '/' + relative(PUBLIC, f).split('\\').join('/'));
-urls.push(BASE + '/staffhotdog/');          // 리더 HTML(디렉터리 URL)
+urls.push(BASE + '/staffhotdog/');                 // 리다이렉트 스텁
+urls.push(BASE + '/staffhotdog-reader.js');        // 이북 엔진
+// 원문 페이지 HTML(이북 오버레이가 본문을 읽음) — 오프라인 즉시 가능하도록 프리캐시
+const index = JSON.parse(readFileSync(join(PUBLIC, 'staffhotdog/content/index.json'), 'utf8'));
+for (const b of index) urls.push(`${BASE}/staffhotdog/book${b.id}/`);
 urls.sort();
 
 // 버전 = 프리캐시 대상 내용 해시 → 콘텐츠 바뀌면 캐시 갱신
 const hash = createHash('sha1');
 for (const f of files) hash.update(readFileSync(f));
+hash.update(readFileSync(join(PUBLIC, 'staffhotdog-reader.js')));
 hash.update(urls.join(','));
 const VERSION = 'tilmore-' + hash.digest('hex').slice(0, 10);
 

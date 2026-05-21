@@ -57,7 +57,7 @@ banner:
 <!-- 자동 생성 파일 — 직접 수정 금지. 원본은 public/staffhotdog/content/book${b.id}.json -->
 
 
-<a class="ebook-launch" href="${BASE}/staffhotdog/?book=${b.id}">📖 이북으로 보기</a>
+<a class="ebook-launch" href="?view=book">📖 이북으로 보기</a>
 
 ${body}
 `;
