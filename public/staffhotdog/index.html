@@ -174,7 +174,8 @@
     let fs = Number(localStorage.getItem('hd.fs')) || 17;
     document.documentElement.style.setProperty('--fs', fs + 'px');
 
-    const fmtTitle = (t) => t.replace(/^스태프 핫도그\s*/, '').trim();
+    const fmtTitle = (t) => t.replace(/^스태프 핫도그\s*/, '').trim();   // 메뉴용: "#1 — MapReduce"
+    const barTitle = (t) => t.split('—')[0].trim();                      // 상단바용: "스태프 핫도그 #1"
 
     async function init() {
       try {
@@ -202,7 +203,7 @@
       curBook = books.find((b) => b.id === id);
       localStorage.setItem('hd.lastbook', id);
       curData = await (await fetch(`content/book${id}.json`)).json();
-      $('bookTitle').textContent = fmtTitle(curData.title);
+      $('bookTitle').textContent = barTitle(curData.title);
       $('dlLink').href = curBook.epub;
       document.querySelectorAll('#booksel button').forEach((b) => b.classList.toggle('active', b.dataset.id === id));
 
