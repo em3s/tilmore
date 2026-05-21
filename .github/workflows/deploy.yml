@@ -29,6 +29,24 @@ jobs:
 
       - run: npm run build
 
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Validate EPUBs (epubcheck)
+        run: |
+          VER=5.1.0
+          curl -sL -o epubcheck.zip "https://github.com/w3c/epubcheck/releases/download/v${VER}/epubcheck-${VER}.zip"
+          unzip -q epubcheck.zip
+          fail=0
+          for f in dist/staffhotdog/*.epub; do
+            echo "::group::epubcheck $(basename "$f")"
+            java -jar "epubcheck-${VER}/epubcheck.jar" "$f" || fail=1
+            echo "::endgroup::"
+          done
+          exit $fail
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
