@@ -68,9 +68,13 @@ banner:
 ```html
 <div class="closing">
   <div class="closing-mark">*&#160;*&#160;*</div>
-  <p>스태프 핫도그 #N — [제목]<br/>다음 핫도그에서 만나요.</p>
+  <em>스태프 핫도그 #N — [제목]</em>
+  <em>다음 핫도그에서 만나요.</em>
 </div>
 ```
+
+- **두 줄은 각각 `<em>`** (이탤릭). `<p>...<br/>...</p>` 쓰지 말 것 — 정렬·색은
+  `.closing`이 처리하므로 래퍼는 `<em>` 두 줄로 끝낸다.
 
 ---
 
@@ -94,6 +98,13 @@ banner:
 ```
 - PNG는 `public/staffhotdog/assets/NN/`에 저장, **절대경로**로 참조.
 - `.figure`는 라이트·다크 공통 흰 배경 락(다이어그램 색 보존). CSS 손댈 것 없음.
+
+**인용구**: 강조 한 줄은 plain `<blockquote>`. 스타일은 `src/styles/hotdog.css`(원문)와
+엔진(이북)이 공통으로 입힌다 — 작성자가 줄 것 없음.
+
+> **인라인 `style="..."` 금지.** 모든 시각 스타일은 클래스(`callout`/`figure`/`closing`)
+> 또는 `hotdog.css`로만. 인라인 스타일은 이북 엔진이 다시 입히는 스타일과 어긋나고
+> 라이트·다크 양쪽에서 깨진다.
 
 > 코드블록·표·콜아웃이 한 페이지를 넘으면 이북에서 다음 장으로 자동 분할. 이미지는
 > 한 페이지에 들어가도록 높이 제한. 작성자가 신경 쓸 것 없음.
@@ -156,6 +167,8 @@ banner:
 - **`<section>` 래퍼 쓰지 마라** (옛 epub 잔재). 챕터는 평탄하게.
 - **이미지는 절대경로** `/tilmore/staffhotdog/assets/NN/...`.
 - 본문 맨 위 `<a class="ebook-launch" href="?view=book">📖 이북으로 보기</a>` 유지.
+- **사인오프는 `<em>` 두 줄** (`<p><br/>` 아님). 위 "닫는 글 사인오프" 참고.
+- **인라인 `style="..."` 금지** — 클래스/`hotdog.css`로만. 인용구는 plain `<blockquote>`.
 - 콜아웃 색은 `purple/blue/amber/teal/gray`만.
 - 그림: monospace+한글 깨짐 주의, viewBox 480 고수, 한 그림 한 메시지.
 
