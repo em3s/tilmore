@@ -110,3 +110,4 @@
 | 02 | Latency Numbers | 외우지 말고 느껴라 | 사람 시간 환산표 | 한 계층 = ~100배 |
 | 03 | Bloom Filter | 빌드는 분산으로, 서빙은 한 덩어리로 | 확률적 자료구조 라이프사이클 | 작아서 다가 아니다 |
 | 04 | LSM Tree | 쓰기는 가볍게, 빚은 compaction이 갚는다 | B-tree vs LSM 쓰기 경로 | 쓰기를 빚으로 만든 자료구조 |
+| 05 | Benchmark | 천장이 아니라 무너지는 지점을 찾아라 | throughput·latency knee curve | BMT는 곡선을 그리는 일 |
