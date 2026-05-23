@@ -143,7 +143,7 @@ cat ran</code></pre>
       <tr><th>단계</th><th>Unix</th><th>SQL</th><th>Spark</th></tr>
     </thead>
     <tbody>
-      <tr><td><strong>Map</strong></td><td><code>awk</code></td><td><code>SELECT</code> 식</td><td><code>.map()</code></td></tr>
+      <tr><td><strong>Map</strong></td><td><code>tr</code></td><td><code>SELECT</code> 식</td><td><code>.map()</code></td></tr>
       <tr><td><strong>Shuffle</strong></td><td><code>sort</code></td><td><code>GROUP BY</code></td><td><code>groupByKey()</code></td></tr>
       <tr><td><strong>Reduce</strong></td><td><code>uniq -c</code></td><td>집계 함수</td><td><code>reduceByKey()</code></td></tr>
     </tbody>
@@ -274,5 +274,6 @@ counts.collect()</code></pre>
 
   <div class="closing">
     <div class="closing-mark">*&#160;*&#160;*</div>
-    <p>스태프 핫도그 #1 — MapReduce<br/>다음 핫도그에서 만나요.</p>
+    <em>스태프 핫도그 #1 — MapReduce</em>
+    <em>다음 핫도그에서 만나요.</em>
   </div>
