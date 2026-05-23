@@ -138,6 +138,14 @@ banner:
 - 박스 stroke `1.5~2.5px` (얇으면 다크모드에서 안 보임)
 - **한 그림 = 한 메시지.**
 
+**SVG → PNG 변환** (이 repo엔 cairosvg 없음, `rsvg-convert`·`inkscape` 설치돼 있음):
+
+```sh
+rsvg-convert -w 1000 figX_name.svg -o public/staffhotdog/assets/NN/figX_name.png
+```
+
+임시 SVG는 변환 후 지운다(PNG만 커밋). `out_width=1000` 고정.
+
 ---
 
 ## 확인 · 배포
