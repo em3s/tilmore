@@ -46,7 +46,7 @@ banner:
   <p>구체적인 의사결정 몇 가지가 자동으로 도출됩니다.</p>
 
   <ul>
-    <li><strong>"네트워크 한 번 갔다오면 캐시 미스 100만 번"</strong> — 0.5ms / 100ns = 5,000배. 그래서 캐시 한 번 미스나는 게 네트워크 한 번 가는 것보단 훨씬 싸요.</li>
+    <li><strong>"네트워크 한 번 갔다오면 캐시 미스 5,000번"</strong> — 0.5ms / 100ns = 5,000배. 그래서 캐시 한 번 미스나는 게 네트워크 한 번 가는 것보단 훨씬 싸요.</li>
     <li><strong>"미국-유럽 호출은 초당 6~7회가 한계"</strong> — 1초 / 150ms ≈ 6.7. 직렬로 부르면 7번이 끝. UI 한 화면에 그런 호출이 30번이면? 5초 걸립니다.</li>
     <li><strong>"디스크 한 번 seek = 메모리 1MB 읽기 1000번"</strong> — 10ms / 10μs = 1,000배. DB 인덱스가 왜 그렇게 중요한지가 여기서 나와요.</li>
   </ul>
@@ -123,7 +123,7 @@ banner:
 
   <p>계층을 외우진 마세요. 대신 이 패턴만 기억하시면 됩니다:</p>
 
-  <blockquote style="font-style:italic; border-left: 3px solid rgba(127,127,127,0.4); padding: 0.2em 1em; margin: 1.2em 0;">
+  <blockquote>
     <p>한 계층 내려갈 때마다 약 100배 느려진다. <br/>그리고 같은 계층 안에서도 가장 빠른 것과 가장 느린 것은 또 100배 차이가 난다.</p>
   </blockquote>
 
@@ -145,7 +145,7 @@ banner:
 
 
 
-  <blockquote style="font-style:italic; border-left: 3px solid rgba(127,127,127,0.4); padding: 0.2em 1em; margin: 1.2em 0;">
+  <blockquote>
     <p>한 페이지에 <strong>256KB 이미지 30장</strong>을 띄워야 한다. <strong>HDD 한 대</strong>로 처리할 때, 응답 시간은 얼마나 걸리나? 그리고 그 서버는 초당 몇 페이지를 만들 수 있나?</p>
   </blockquote>
 
@@ -191,7 +191,7 @@ banner:
 
   <ul>
     <li><strong>"서버 17대가 필요한데 그 비용 감당 가능합니까?"</strong> — 6 → 100 RPS면 17배</li>
-    <li><strong>"SSD로 가면 seek가 50배 빨라지니 서버 1~2대로 끝납니다"</strong> — 비용 절감 시나리오</li>
+    <li><strong>"SSD로 가면 seek가 500배 빨라지니 서버 1~2대로 끝납니다"</strong> — 비용 절감 시나리오</li>
     <li><strong>"이미지를 CDN에 넣으면 우리 서버는 호출조차 안 받으니 가장 낫습니다"</strong> — 아키텍처 변경 시나리오</li>
   </ul>
 
@@ -245,5 +245,6 @@ banner:
 
   <div class="closing">
     <div class="closing-mark">*&#160;*&#160;*</div>
-    <p>스태프 핫도그 #2 — Latency Numbers<br/>다음 핫도그에서 만나요.</p>
+    <em>스태프 핫도그 #2 — Latency Numbers</em>
+    <em>다음 핫도그에서 만나요.</em>
   </div>
