@@ -16,6 +16,8 @@ export default defineConfig({
       description: 'Today I Learned and More',
       // PWA — '홈 화면에 추가' 시 풀스크린 앱처럼 (iOS는 manifest + apple 메타로 동작)
       head: [
+        { tag: 'link', attrs: { rel: 'icon', type: 'image/svg+xml', href: '/tilmore/favicon.svg' } },
+        { tag: 'link', attrs: { rel: 'shortcut icon', href: '/tilmore/favicon.ico' } },
         { tag: 'link', attrs: { rel: 'manifest', href: '/tilmore/manifest.webmanifest' } },
         { tag: 'link', attrs: { rel: 'apple-touch-icon', href: '/tilmore/icons/icon-192.png' } },
         { tag: 'meta', attrs: { name: 'apple-mobile-web-app-capable', content: 'yes' } },
