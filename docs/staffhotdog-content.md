@@ -112,3 +112,4 @@
 | 04 | LSM Tree | 쓰기는 가볍게, 빚은 compaction이 갚는다 | B-tree vs LSM 쓰기 경로 | 쓰기를 빚으로 만든 자료구조 |
 | 05 | Benchmark | 천장이 아니라 무너지는 지점을 찾아라 | throughput·latency knee curve | BMT는 곡선을 그리는 일 |
 | 06 | Multi-Armed Bandit | 전부 볼 수 없다 | 모집단과 샘플 | 확신을 기다리지 말고 움직이며 배워라 |
+| 07 | Type 1 / Type 2 Error | 현실의 문제는 틀리는 게 아니라 놓치는 것이다 | 두 종류의 실수 4분면 | Type 1은 로그에 찍히고 Type 2는 매출에 찍힌다 |
