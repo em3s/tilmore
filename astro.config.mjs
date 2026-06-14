@@ -46,6 +46,10 @@ export default defineConfig({
           label: '스태프 핫도그',
           autogenerate: { directory: 'staffhotdog' },
         },
+        {
+          label: '쿠킹 클래스',
+          autogenerate: { directory: 'cookingclass' },
+        },
       ],
     }),
   ],
