@@ -18,7 +18,7 @@ banner:
 
 <p>배열 두 개를 더한다고 해보자.</p>
 
-<pre><code>for (int i = 0; i < n; i++) {
+<pre><code>for (int i = 0; i &lt; n; i++) {
     c[i] = a[i] + b[i];
 }</code></pre>
 
